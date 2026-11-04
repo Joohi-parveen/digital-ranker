@@ -1,0 +1,18 @@
+NEW INQUIRY RECEIVED - AI DIGITAL RANKER
+==========================================
+
+A new inquiry has been submitted on aidigitalranker.com:
+
+- Full Name: {{ lead.name }}
+- Email Address: {{ lead.email }}
+- Phone Number: {{ lead.phone|default:"Not provided" }}
+- Subject / Service: {{ lead.subject|default:"General Inquiry" }}
+- Submitted At: {{ lead.created_at|date:"M d, Y - h:i A" }}
+- Visitor IP: {{ lead.ip_address|default:"N/A" }}
+
+Message:
+------------------------------------------
+{{ lead.message|default:"(No message provided)" }}
+------------------------------------------
+
+You can reply directly to this email to respond to {{ lead.name }} at {{ lead.email }}.

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Digital Ranker  CMS Dashboard{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6B2E88;
+            --primary-hover: #5A2575;
+            --secondary: #7C3AED;
+            --accent: #A855F7;
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            
+            --bg-workspace: #F8FAFC;
+            --bg-sidebar: #2A245C;
+            --sidebar-active: #6B2E88;
+            --sidebar-hover: rgba(255, 255, 255, 0.08);
+            --sidebar-icons: #D8D5F2;
+            --sidebar-text: #F4F4FF;
+
+            --bg-card: #FFFFFF;
+            --border-color: #E2E8F0;
+            --heading-color: #2A245C;
+            --text-main: #64748B;
+            --text-muted: #94a3b8;
+            --sidebar-width: 220px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-workspace);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle Radial Backlight Glows */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(107, 46, 136, 0.03) 0%, rgba(248, 250, 252, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(42, 36, 92, 0.04);
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .sidebar-brand {
+            font-family: 'Outfit', sans-serif;
+            padding: 20px 15px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--sidebar-text);
+        }
+
+        .sidebar-brand i {
+            background: linear-gradient(135deg, var(--accent) 0%, #fff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 20px;
+            filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.3));
+        }
+
+        .sidebar-brand span {
+            background: linear-gradient(135deg, #fff 0%, var(--sidebar-icons) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 10px ;
+            margin: 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 10px;
+            color: var(--sidebar-icons);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            color: #fff;
+            background-color: var(--sidebar-hover);
+            transform: translateX(4px);
+        }
+
+        .sidebar-menu > li.active > a {
+            color: #fff;
+            background: var(--sidebar-active);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-menu > li.active > a i {
+            color: #fff;
+        }
+
+        /* Sidebar Dropdown & Submenu */
+        .sidebar-menu li.sidebar-dropdown {
+            position: relative;
+        }
+
+        .sidebar-menu li.sidebar-dropdown .dropdown-toggle-btn {
+            cursor: pointer;
+            user-select: none;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-menu li.sidebar-dropdown .dropdown-toggle-btn .btn-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sidebar-menu li.sidebar-dropdown .submenu-arrow {
+            font-size: 12px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--sidebar-icons);
+        }
+
+        .sidebar-menu li.sidebar-dropdown.open .submenu-arrow {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+
+        .sidebar-menu li.sidebar-dropdown.active > .dropdown-toggle-btn {
+            color: #fff;
+            background: rgba(107, 46, 136, 0.45);
+        }
+
+        .sidebar-menu li.sidebar-dropdown.active > .dropdown-toggle-btn i {
+            color: #fff;
+        }
+
+        .sidebar-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.3s ease;
+            opacity: 0;
+        }
+
+        .sidebar-submenu.show {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 6px;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-submenu li a {
+            padding: 8px 10px 8px 30px;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(216, 213, 242, 0.85);
+            border-radius: 10px;
+            gap: 12px;
+        }
+
+        .sidebar-submenu li a i {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .sidebar-submenu li a:hover {
+            color: #fff;
+            background-color: var(--sidebar-hover);
+            transform: translateX(4px);
+        }
+
+        .sidebar-submenu li.active a {
+            color: #fff;
+            background: var(--sidebar-active);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-submenu li.active a i {
+            color: #fff;
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            padding: 20px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-logout {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: rgba(239, 68, 68, 0.08);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background-color: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Workspace Area */
+        .workspace {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 20px;
+            min-width: 0;
+        }
+
+        /* Top Bar Styling */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .topbar h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+            color: var(--heading-color);
+        }
+
+        .h4, h4 {
+            font-size: 1.2rem;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 6px 14px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0;
+            color: var(--heading-color);
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Cards / Containers Styling */
+        .card-custom {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            transition: all 0.25s ease;
+            height: 100%;
+        }
+
+        .card-custom:hover {
+            border-color: rgba(107, 46, 136, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(42, 36, 92, 0.06);
+        }
+
+        .h2, h2 {
+            font-size: 1.5rem;
+        }
+
+        /* Table Design */
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .table-custom th {
+            text-align: left;
+            padding: 10px 10px;
+            background-color: transparent;
+            color: var(--heading-color);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: capitalize;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table-custom td {
+            padding: 10px 10px;
+            background-color: #ffffff;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+        }
+
+        .table-custom td:first-child {
+            border-left: 1px solid var(--border-color);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .table-custom td:last-child {
+            border-right: 1px solid var(--border-color);
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .table-custom tr:hover td {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        /* Status badges */
+        .badge-published {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .badge-published::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+
+        .badge-draft {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .badge-draft::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--warning);
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-right: 6px;
+        }
+
+        .btn-action:hover {
+            color: #fff;
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(107, 46, 136, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-action-delete:hover {
+            color: #fff;
+            border-color: var(--danger);
+            background-color: var(--danger);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Forms Styling */
+        .form-label {
+            color: var(--heading-color);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: #334155 !important;
+            padding: 12px 18px;
+            font-size: 14.5px;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 46, 136, 0.15);
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Alert boxes */
+        .alert-custom-glass {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid var(--border-color);
+            color: #334155;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .alert-custom-glass.alert-error {
+            border-left: 4px solid #f87171;
+        }
+
+        .alert-custom-glass.alert-info {
+            border-left: 4px solid #60a5fa;
+        }
+
+        .alert-custom-glass.alert-default {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(107, 46, 136, 0.25);
+            transition: all 0.25s ease;
+            font-size: 12px !important;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(107, 46, 136, 0.35);
+        }
+
+        
+
+    </style>
+    {% block extra_head %}{% endblock %}
+    
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-shapes"></i> AI Digital Ranker 
+        </div>
+        <ul class="sidebar-menu">
+            <li class="{% if active_tab == 'dashboard' %}active{% endif %}">
+                <a href="{% url 'dashboard_index' %}">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </a>
+            </li>
+            <!-- Manage Blogs Dropdown -->
+            <li class="sidebar-dropdown {% if active_tab == 'blogs' or active_tab == 'categories' %}active open{% endif %}">
+                <a href="javascript:void(0);" class="dropdown-toggle-btn" onclick="toggleSidebarSubmenu(this)">
+                    <div class="btn-label">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>Manage Blogs</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="sidebar-submenu {% if active_tab == 'blogs' or active_tab == 'categories' %}show{% endif %}">
+                    <li class="{% if active_tab == 'blogs' %}active{% endif %}">
+                        <a href="{% url 'dashboard_blog_list' %}">
+                            <i class="fa-solid fa-list-ul"></i> All Blog Posts
+                        </a>
+                    </li>
+                    <li class="{% if active_tab == 'categories' %}active{% endif %}">
+                        <a href="{% url 'dashboard_category_list' %}">
+                            <i class="fa-solid fa-layer-group"></i> Blog Categories
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- Services Dropdown -->
+            <li class="sidebar-dropdown {% if active_tab == 'services' or active_tab == 'services_add' %}active open{% endif %}">
+                <a href="javascript:void(0);" class="dropdown-toggle-btn" onclick="toggleSidebarSubmenu(this)">
+                    <div class="btn-label">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Services</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="sidebar-submenu {% if active_tab == 'services' or active_tab == 'services_add' %}show{% endif %}">
+                    <li class="{% if active_tab == 'services' %}active{% endif %}">
+                        <a href="{% url 'dashboard_service_list' %}">
+                            <i class="fa-solid fa-list-check"></i> All Services
+                        </a>
+                    </li>
+                    <li class="{% if active_tab == 'services_add' %}active{% endif %}">
+                        <a href="{% url 'dashboard_service_create' %}">
+                            <i class="fa-solid fa-circle-plus"></i> Add Service
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- Case Studies Dropdown -->
+            <li class="sidebar-dropdown {% if active_tab == 'case_studies' or active_tab == 'case_studies_add' %}active open{% endif %}">
+                <a href="javascript:void(0);" class="dropdown-toggle-btn" onclick="toggleSidebarSubmenu(this)">
+                    <div class="btn-label">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Case Studies</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="sidebar-submenu {% if active_tab == 'case_studies' or active_tab == 'case_studies_add' %}show{% endif %}">
+                    <li class="{% if active_tab == 'case_studies' %}active{% endif %}">
+                        <a href="{% url 'dashboard_case_study_list' %}">
+                            <i class="fa-solid fa-list-check"></i> All Case Studies
+                        </a>
+                    </li>
+                    <li class="{% if active_tab == 'case_studies_add' %}active{% endif %}">
+                        <a href="{% url 'dashboard_case_study_create' %}">
+                            <i class="fa-solid fa-circle-plus"></i> Add Case Study
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="{% if active_tab == 'leads' %}active{% endif %}">
+                <a href="{% url 'dashboard_lead_list' %}">
+                    <i class="fa-solid fa-envelope-open-text"></i> Contact Leads
+                </a>
+            </li>
+            <li class="{% if active_tab == 'blocked_ips' %}active{% endif %}">
+                <a href="{% url 'dashboard_blocked_ip_list' %}">
+                    <i class="fa-solid fa-shield-halved"></i> Blocked IPs
+                </a>
+            </li>
+            <li class="{% if active_tab == 'seo' %}active{% endif %}">
+                <a href="{% url 'dashboard_seo_list' %}">
+                    <i class="fa-solid fa-search"></i> SEO Management
+                </a>
+            </li>
+            <li class="{% if active_tab == 'media' %}active{% endif %}">
+                <a href="{% url 'media_list' %}">
+                    <i class="fa-solid fa-folder-open"></i> Media Library
+                </a>
+            </li>
+            <li class="mt-auto">
+                <a href="{% url 'home' %}" target="_blank">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View Public Site
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="{% url 'dashboard_logout' %}" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div>
+                <h4>CMS Control Center</h4>
+                <p class="text-muted mb-0" id="live-time" style="font-size: 13px; font-weight: 500;"></p>
+            </div>
+            <div class="topbar-user">
+                <div class="text-end d-none d-md-block" style="line-height: 1.2;">
+                    <h6 class="user-name">{{ request.user.get_full_name|default:request.user.username }}</h6>
+                    <span class="user-role">Administrator</span>
+                </div>
+                <div class="user-avatar">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Alerts -->
+        {% if messages %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    {% for message in messages %}
+                        <div class="alert alert-dismissible fade show alert-custom-glass d-flex align-items-center justify-content-between {% if message.tags == 'error' %}alert-error{% elif message.tags == 'info' %}alert-info{% else %}alert-default{% endif %}" role="alert">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fa-solid {% if message.tags == 'error' %}fa-triangle-exclamation text-danger{% else %}fa-circle-check text-success{% endif %}" style="font-size: 18px;"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close" style="position: static; padding: 0;"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Content Block -->
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple live calendar/clock display
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('en-US', options);
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const clockEl = document.getElementById('live-time');
+            if (clockEl) {
+                clockEl.innerHTML = `${dateStr} | ${timeStr}`;
+            }
+        }
+
+        // Sidebar Submenu Accordion Toggle
+        function toggleSidebarSubmenu(btn) {
+            const dropdown = btn.closest('.sidebar-dropdown');
+            if (!dropdown) return;
+            const submenu = dropdown.querySelector('.sidebar-submenu');
+            
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                if (submenu) submenu.classList.remove('show');
+            } else {
+                dropdown.classList.add('open');
+                if (submenu) submenu.classList.add('show');
+            }
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

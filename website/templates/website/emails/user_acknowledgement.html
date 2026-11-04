@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You for Contacting AI Digital Ranker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 24px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            padding: 36px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+        .content {
+            padding: 36px 30px;
+            line-height: 1.6;
+        }
+        .content h2 {
+            font-size: 18px;
+            color: #0f172a;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        .content p {
+            margin: 0 0 16px;
+            font-size: 15px;
+            color: #334155;
+        }
+        .summary-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+        .summary-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .summary-card td {
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        .summary-card td.lbl {
+            color: #64748b;
+            font-weight: 600;
+            width: 35%;
+        }
+        .summary-card td.val {
+            color: #0f172a;
+        }
+        .highlight-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: #1e40af;
+        }
+        .footer {
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 24px 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .footer p {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Thank You for Reaching Out!</h1>
+            <p>We have received your message and will be in touch soon.</p>
+        </div>
+        <div class="content">
+            <h2>Dear {{ lead.name }},</h2>
+            <p>
+                Thank you for contacting <strong>AI Digital Ranker</strong>. We appreciate your interest in our services.
+            </p>
+            <p>
+                One of our digital strategy specialists is reviewing your inquiry and will connect with you within <strong>24 business hours</strong>.
+            </p>
+
+            <div class="summary-card">
+                <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; margin-bottom: 8px;">
+                    Summary of Your Inquiry
+                </div>
+                <table>
+                    <tr>
+                        <td class="lbl">Subject / Service:</td>
+                        <td class="val"><strong>{{ lead.subject|default:"General Inquiry" }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Email:</td>
+                        <td class="val">{{ lead.email }}</td>
+                    </tr>
+                    {% if lead.phone %}
+                    <tr>
+                        <td class="lbl">Phone:</td>
+                        <td class="val">{{ lead.phone }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+
+            <div class="highlight-box">
+                <strong>Need immediate assistance?</strong><br>
+                Feel free to reply directly to this email or reach our team at <a href="mailto:sales@aidigitalranker.com" style="color: #1e40af; font-weight: 600;">sales@aidigitalranker.com</a>.
+            </div>
+
+            <p style="margin-bottom: 0;">
+                Best regards,<br>
+                <strong>The AI Digital Ranker Team</strong><br>
+                <a href="https://aidigitalranker.com" style="color: #2563eb; text-decoration: none; font-size: 14px;">aidigitalranker.com</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>&copy; {% now "Y" %} AI Digital Ranker. All rights reserved.</p>
+            <p>You received this automated confirmation because an inquiry was submitted with this email address.</p>
+        </div>
+    </div>
+</body>
+</html>

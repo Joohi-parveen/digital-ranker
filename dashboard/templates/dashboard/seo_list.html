@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}SEO Settings Management - AI digital Ranker CMS Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Block -->
+    <div class="mb-5">
+        <h4 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">SEO Settings Management</h4>
+        <p class="text-muted mb-0" style="font-size: 13.5px;">Manage page-specific title tags, descriptions, keywords, Open Graph settings, and favicons for your public website.</p>
+    </div>
+
+    <!-- Message Alerts -->
+    {% if messages %}
+        <div class="row mb-4">
+            <div class="col-12">
+                {% for message in messages %}
+                    <div class="alert alert-dismissible fade show alert-custom-glass d-flex align-items-center justify-content-between {% if message.tags == 'error' %}alert-error{% elif message.tags == 'info' %}alert-info{% else %}alert-default{% endif %}" role="alert">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa-solid {% if message.tags == 'error' %}fa-triangle-exclamation text-danger{% else %}fa-circle-check text-success{% endif %}" style="font-size: 18px;"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="position: static; padding: 0;"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Page SEO Listing Grid -->
+    <div class="card-custom p-0 overflow-hidden">
+        <div class="table-responsive p-3">
+            <table class="table table-custom mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Page Name</th>
+                        <th style="width: 15%;">Configuration Status</th>
+                        <th style="width: 25%;">Meta Title</th>
+                        <th style="width: 35%;">Meta Description</th>
+                        <th class="text-end" style="width: 10%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in pages_data %}
+                    <tr>
+                        <td>
+                            <span class="fw-bold text-dark" style="font-size: 14.5px;">{{ page.label }}</span>
+                        </td>
+                        <td>
+                            {% if page.is_configured %}
+                                <span class="badge-published" style="font-size: 11px;">Configured</span>
+                            {% else %}
+                                <span class="badge-draft" style="font-size: 11px;">Not Configured</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if page.is_configured %}
+                                <span class="text-dark fw-semibold">{{ page.setting.meta_title|truncatechars:45 }}</span>
+                            {% else %}
+                                <span class="text-muted" style="font-style: italic; font-size: 13px;">Using default fallback</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if page.is_configured %}
+                                <span class="text-secondary" style="font-size: 13.5px;">{{ page.setting.meta_description|truncatechars:70 }}</span>
+                            {% else %}
+                                <span class="text-muted" style="font-style: italic; font-size: 13px;">Using site default fallback descriptions</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'dashboard_seo_edit' page.code %}" class="btn-action" title="Edit Page SEO Settings" style="width: auto; padding: 6px 14px; border-radius: 8px;">
+                                <i class="fa-solid fa-pen-to-square me-1.5" style="font-size: 12px;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

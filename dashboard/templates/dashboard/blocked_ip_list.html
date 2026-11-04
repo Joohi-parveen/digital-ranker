@@ -1,0 +1,260 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Blocked IPs - AI Digital Ranker CMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Actions -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">Blocked IP Addresses</h4>
+            <p class="text-muted mb-0" style="font-size: 13.5px;">Manage IP blacklisting and view intercepted spam attempts across all public website forms</p>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary fw-semibold px-3 py-2 d-inline-flex align-items-center gap-2" style="border-radius: 10px; font-size: 14px;" data-bs-toggle="modal" data-bs-target="#addBlockedIpModal">
+                <i class="fa-solid fa-plus"></i> Add Blocked IP
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom p-3 d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; font-size: 20px;">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <span class="text-muted d-block" style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Total Blocks</span>
+                    <h5 class="mb-0 fw-bold" style="color: var(--heading-color);">{{ total_count }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom p-3 d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 20px;">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <div>
+                    <span class="text-muted d-block" style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Active Bans</span>
+                    <h5 class="mb-0 fw-bold" style="color: var(--heading-color);">{{ active_count }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom p-3 d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 20px;">
+                    <i class="fa-solid fa-toggle-off"></i>
+                </div>
+                <div>
+                    <span class="text-muted d-block" style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Inactive</span>
+                    <h5 class="mb-0 fw-bold" style="color: var(--heading-color);">{{ inactive_count }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom p-3 d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; font-size: 20px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <span class="text-muted d-block" style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Spam Prevented</span>
+                    <h5 class="mb-0 fw-bold" style="color: var(--heading-color);">{{ total_blocked_attempts }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter and Search -->
+    <div class="card-custom mb-4 p-4">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted" style="border-color: var(--border-color);"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" value="{{ query }}" class="form-control border-start-0 bg-transparent" placeholder="Search by IP address or reason..." style="font-size: 14px; border-color: var(--border-color); color: var(--text-main) !important;">
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <select name="status" class="form-select" style="font-size: 14px; border-color: var(--border-color); color: var(--text-main);">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active Only</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive Only</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-semibold px-4" style="border-radius: 10px; font-size: 14px;">Filter</button>
+                {% if query or status_filter %}
+                <a href="{% url 'dashboard_blocked_ip_list' %}" class="btn btn-outline-secondary px-3" style="border-radius: 10px; font-size: 14px;">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Blocked IPs Table -->
+    <div class="card-custom p-0 overflow-hidden">
+        <div class="table-responsive p-3">
+            <table class="table table-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>Reason / Notes</th>
+                        <th>Status</th>
+                        <th>Attempts Blocked</th>
+                        <th>Last Attempt</th>
+                        <th>Added On</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_obj %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-light text-dark border font-monospace px-2.5 py-1.5" style="font-size: 13px; font-weight: 600; letter-spacing: 0.3px;">
+                                <i class="fa-solid fa-network-wired text-muted me-1.5" style="font-size: 11px;"></i>{{ item.ip_address }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="text-dark" style="font-size: 13.5px;">{{ item.reason|default:"No reason specified"|truncatechars:45 }}</span>
+                            {% if item.expires_at %}
+                            <small class="d-block text-muted" style="font-size: 11px;"><i class="fa-regular fa-clock me-1"></i>Expires: {{ item.expires_at|date:"M d, Y H:i" }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.is_active %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1" style="font-size: 11.5px; font-weight: 600;">
+                                <i class="fa-solid fa-circle me-1" style="font-size: 7px;"></i>Active
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1" style="font-size: 11.5px; font-weight: 600;">
+                                <i class="fa-regular fa-circle me-1" style="font-size: 7px;"></i>Inactive
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.blocked_attempts_count > 0 %}
+                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle px-2.5 py-1 fw-bold" style="font-size: 12px;">
+                                {{ item.blocked_attempts_count }} blocked
+                            </span>
+                            {% else %}
+                            <span class="text-muted" style="font-size: 13px;">0</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.last_attempt_at %}
+                            <span class="text-muted" style="font-size: 12.5px;">{{ item.last_attempt_at|date:"M d, Y H:i" }}</span>
+                            {% else %}
+                            <span class="text-muted" style="font-size: 12px;">&mdash;</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted" style="font-size: 12.5px;">{{ item.created_at|date:"M d, Y" }}</td>
+                        <td class="text-end">
+                            <div class="d-inline-flex align-items-center gap-1">
+                                <!-- Toggle Active Status -->
+                                <form method="post" action="{% url 'dashboard_blocked_ip_toggle' item.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action" title="{% if item.is_active %}Deactivate Block{% else %}Activate Block{% endif %}">
+                                        <i class="fa-solid {% if item.is_active %}fa-toggle-on text-success{% else %}fa-toggle-off text-muted{% endif %}" style="font-size: 16px;"></i>
+                                    </button>
+                                </form>
+                                <!-- Delete Block -->
+                                <form method="post" action="{% url 'dashboard_blocked_ip_delete' item.pk %}" class="d-inline" onsubmit="return confirm('Remove IP {{ item.ip_address }} from the blocklist completely?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-action-delete" title="Delete IP Block">
+                                        <i class="fa-solid fa-trash-can" style="font-size: 13px;"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-shield-halved mb-3 text-muted d-block" style="font-size: 44px; opacity: 0.3;"></i>
+                            No blocked IP addresses found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        {% if page_obj.has_other_pages %}
+        <div class="p-4 border-top d-flex align-items-center justify-content-between" style="border-color: var(--border-color) !important;">
+            <span class="text-muted" style="font-size: 13px;">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+            </span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0 gap-1">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">&laquo;</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">&raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Modal: Add Blocked IP -->
+<div class="modal fade" id="addBlockedIpModal" tabindex="-1" aria-labelledby="addBlockedIpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-custom p-0 overflow-hidden" style="border: 1px solid var(--border-color);">
+            <div class="modal-header px-4 py-3 border-bottom" style="border-color: var(--border-color) !important;">
+                <h5 class="modal-title fw-bold" id="addBlockedIpModalLabel" style="font-family: 'Outfit', sans-serif; font-size: 17px;">
+                    <i class="fa-solid fa-ban text-danger me-2"></i> Add IP Address to Blocklist
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'dashboard_blocked_ip_create' %}">
+                {% csrf_token %}
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">IP Address <span class="text-danger">*</span></label>
+                        {{ add_form.ip_address }}
+                        <small class="text-muted" style="font-size: 11.5px;">Supports IPv4 (e.g. 198.51.100.45) or IPv6 (e.g. 2001:db8::1).</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Reason for Block</label>
+                        {{ add_form.reason }}
+                        <small class="text-muted" style="font-size: 11.5px;">Internal note describing why this IP is being blocked.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Expires At (Optional)</label>
+                        {{ add_form.expires_at }}
+                        <small class="text-muted" style="font-size: 11.5px;">Leave empty for a permanent ban.</small>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        {{ add_form.is_active }}
+                        <label class="form-check-label fw-semibold" for="{{ add_form.is_active.id_for_label }}" style="font-size: 13px;">Enforce block immediately</label>
+                    </div>
+                </div>
+                <div class="modal-footer px-4 py-3 border-top" style="border-color: var(--border-color) !important;">
+                    <button type="button" class="btn btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius: 8px; font-size: 13.5px;">Cancel</button>
+                    <button type="submit" class="btn btn-danger fw-semibold px-4" style="border-radius: 8px; font-size: 13.5px;">Save Block</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

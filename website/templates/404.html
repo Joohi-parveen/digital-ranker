@@ -1,0 +1,81 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found - AI Digital Ranker{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Oops! The page you are looking for does not exist on AI Digital Ranker. Use the links below to navigate back to our site.">
+<meta name="robots" content="noindex, follow">
+{% endblock %}
+
+{% block content %}
+
+<!--====== Start Page Hero Section ======-->
+<section class="page-hero bg_cover p-r z-1" data-src="{% static 'assets/images/choose-bg.jpg' %}" style="background-image: url(&quot;{% static 'assets/images/choose-bg.jpg' %}&quot;);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="page-content text-center">
+                    <h1 data-aos="fade-down" data-aos-duration="800">404 Error</h1>
+                    <ul data-aos="fade-up" data-aos-duration="1000">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li>404 Error</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End Page Hero Section ======-->
+
+<!--====== Start 404 Section ======-->
+<section class="error-404-section pt-100 pb-100" style="background-color: #f8fafc; position: relative;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-9 col-md-11">
+                <div class="thank-you-card text-center" data-aos="fade-up" data-aos-duration="1000">    
+                    <div class="error-illustration mb-4" style="position: relative; display: inline-block;">
+                        <h1 class="error-code-text display-1 fw-bold">404</h1>
+                    </div>      
+                    <style>
+                        @keyframes float-animation {
+                            0%, 100% { transform: translateY(0px) rotate(0deg); }
+                            50% { transform: translateY(-12px) rotate(1deg); }
+                        }
+                    </style>
+
+                    <!-- Main Headings -->
+                    <h2 class="mb-3" style="font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: #0f172a; line-height: 1.25;">
+                        Oops! Page Not Found
+                    </h2>
+                    
+                    <h4 class="mb-3" style="color: #475569; font-weight: 500; font-size: 18px;">
+                        The page you are looking for doesn't exist or has been moved.
+                    </h4>
+
+                    <!-- Message Body -->
+                    <p class="mb-4 mx-auto" style="max-width: 540px; color: #64748b; font-size: 16px; line-height: 1.7;">
+                        It looks like the link you followed might be broken, or the page has been moved or deleted. Let's get you back on track so you don't miss anything.
+                    </p>
+
+                    <!-- Divider -->
+                    <hr class="my-4 mx-auto" style="max-width: 480px; opacity: 0.12;">
+
+                    <!-- Action Buttons -->
+                    <div class="thank-you-actions d-flex flex-wrap justify-content-center gap-3 mt-4">
+                        <a href="{% url 'home' %}" class="theme-btn gradient-btn" style="min-width: 190px;">
+                            <i class="fa-solid fa-house me-2"></i> Back to Home
+                        </a>
+                        <a href="{% url 'blog_list' %}" class="theme-btn" style="min-width: 190px; background: #0f172a; color: #ffffff; border-radius: 50px;">
+                            Explore Blogs <i class="fa fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End 404 Section ======-->
+
+{% endblock %}

@@ -1,0 +1,434 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} Blog Post - CMS Dashboard{% endblock %}
+
+{% block content %}
+<!--====== Start Page Hero Section ======-->
+<section class="page-hero bg_cover p-r z-1" data-src="{% static 'assets/images/innerpage/bg/page-bg.jpg' %}" style="background-image: url(&quot;{% static 'assets/images/innerpage/bg/page-bg.jpg' %}&quot;);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!--=== Page Content ===-->
+                <div class="page-content text-center">
+                    <h1 class="text-white">{{ action }} Blog Post</h1>
+                    <ul class="breadcrumb-nav">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'blog_list' %}" class="text-white">/ Blog</a></li>
+                        <li class="text-white-50">/ {{ action }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End Page Hero Section ======-->
+
+<!--====== Start Form Section ======-->
+<section class="pt-120 pb-120 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-primary text-white p-4">
+                        <h4 class="mb-0 text-white"><i class="fas fa-edit me-2"></i>{{ action }} Post Form</h4>
+                        <p class="mb-0 text-white-50">Please fill out all the fields below to create or update your blog post.</p>
+                    </div>
+                    <div class="card-body p-5 bg-white">
+                        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Display Non-Field Errors -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                            {% endif %}
+
+                            <!-- Loop & Render Form Fields -->
+                            {% for field in form %}
+                            <div class="mb-4">
+                                {% if field.name == 'content' %}
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark mb-0">
+                                        {{ field.label }}
+                                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                    </label>
+                                    <div class="wp-editor-mode-switcher btn-group btn-group-sm" role="group" aria-label="Editor Mode">
+                                        <button type="button" class="btn btn-primary active px-3 py-1 fw-semibold editor-mode-tab" id="btn-mode-visual" onclick="setEditorMode('visual')">
+                                            <i class="fas fa-pen-nib me-1.5"></i> Visual
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary px-3 py-1 fw-semibold editor-mode-tab" id="btn-mode-code" onclick="setEditorMode('code')">
+                                            <i class="fas fa-code me-1.5"></i> Code / HTML
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wp-editor-container position-relative">
+                                    {{ field }}
+                                    <div id="wp-code-editor-wrapper" class="d-none">
+                                        <textarea id="raw-html-editor" class="form-control font-monospace" spellcheck="false" rows="18" placeholder="<!-- Enter or paste your clean HTML code here -->"></textarea>
+                                        <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted" style="font-size: 12px;">
+                                            <span><i class="fas fa-info-circle me-1"></i> HTML Mode: Edits are synced to the Visual Editor automatically.</span>
+                                            <span>Press <code>Tab</code> to indent</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% elif field.name == 'is_featured' %}
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark mb-1">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <div class="form-check form-switch pt-1">
+                                    {{ field }}
+                                    <label class="form-check-label text-muted ms-2" for="{{ field.id_for_label }}">
+                                        {{ field.help_text }}
+                                    </label>
+                                </div>
+                                {% elif field.name == 'schema_markup' %}
+                                <label class="form-label fw-bold text-dark mb-1">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <div id="schema-repeater-container">
+                                    {{ field }}
+                                    <div id="schema-blocks"></div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addSchemaBlock()">
+                                        <i class="fas fa-plus me-1"></i> Add Another Schema
+                                    </button>
+                                </div>
+                                {% if field.help_text %}
+                                <div class="form-text text-muted mt-1" style="font-size: 13px;">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% else %}
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold text-dark mb-1">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="form-text text-muted mt-1" style="font-size: 13px;">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% endif %}
+
+                                {% if field.errors %}
+                                <div class="text-danger mt-1 small">
+                                    {{ field.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+
+                            <!-- Submit & Cancel Buttons -->
+                            <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                                <a href="{% if post %}{% url 'blog_detail' post.slug %}{% else %}{% url 'blog_list' %}{% endif %}" class="btn btn-outline-secondary px-4 py-2">
+                                    <i class="fas fa-times me-1"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary px-5 py-2 fw-bold text-white">
+                                    <i class="fas fa-save me-1"></i> Save Blog Post
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End Form Section ======-->
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.wp-editor-mode-switcher .editor-mode-tab {
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+.wp-editor-mode-switcher .editor-mode-tab.active {
+    background-color: var(--primary, #6B2E88) !important;
+    border-color: var(--primary, #6B2E88) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(107, 46, 136, 0.2);
+}
+.tox-tinymce {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+}
+.tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
+    background-color: #f8f9fa !important;
+}
+#raw-html-editor {
+    min-height: 500px;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #0f172a;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 16px 20px;
+    resize: vertical;
+    white-space: pre-wrap;
+    tab-size: 4;
+}
+#raw-html-editor:focus {
+    border-color: var(--primary, #6B2E88);
+    box-shadow: 0 0 0 3px rgba(107, 46, 136, 0.15);
+    outline: none;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    let activeEditorMode = 'visual';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.querySelector('#id_content');
+        const rawEditor = document.querySelector('#raw-html-editor');
+        if (!textarea) return;
+
+        if (rawEditor) {
+            rawEditor.value = textarea.value;
+            rawEditor.addEventListener('input', function() {
+                textarea.value = this.value;
+            });
+            rawEditor.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 4;
+                    textarea.value = this.value;
+                }
+            });
+        }
+
+        tinymce.init({
+            selector: '#id_content',
+            height: 500,
+            min_height: 420,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'directionality'
+            ],
+            toolbar: [
+                'blocks | bold italic underline strikethrough | link image table | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | blockquote hr | removeformat | code fullscreen preview | undo redo'
+            ],
+            block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Blockquote=blockquote; Preformatted=pre',
+            branding: false,
+            promotion: false,
+            elementpath: true,
+            resize: true,
+            convert_urls: false,
+            relative_urls: false,
+            remove_script_host: false,
+            default_link_target: '_blank',
+            link_assume_external_targets: true,
+            image_title: true,
+            image_caption: true,
+            image_advtab: true,
+            table_responsive_width: true,
+            content_style: `
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+                    font-size: 15px; 
+                    line-height: 1.8; 
+                    color: #334155; 
+                    padding: 16px 20px;
+                }
+                h1, h2, h3, h4, h5, h6 { color: #1e293b; font-weight: 700; margin-top: 1.4em; margin-bottom: 0.6em; line-height: 1.3; }
+                h1 { font-size: 2.2rem; }
+                h2 { font-size: 1.8rem; }
+                h3 { font-size: 1.5rem; }
+                h4 { font-size: 1.25rem; }
+                h5 { font-size: 1.1rem; }
+                h6 { font-size: 1rem; }
+                p { margin-bottom: 1.2em; }
+                a { color: #6B2E88; text-decoration: underline; }
+                blockquote { border-left: 4px solid #6B2E88; margin: 1.5em 0; padding: 12px 20px; background: #f8fafc; font-style: italic; color: #475569; border-radius: 0 8px 8px 0; }
+                table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+                table th, table td { border: 1px solid #e2e8f0; padding: 10px 14px; }
+                table th { background: #f1f5f9; font-weight: 600; }
+                img { max-width: 100%; height: auto; border-radius: 8px; }
+                hr { border: none; border-top: 1px solid #e2e8f0; margin: 2em 0; }
+                ul, ol { padding-left: 24px; margin-bottom: 1.2em; }
+                li { margin-bottom: 0.4em; }
+                code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #d63384; }
+                pre { background: #1e293b; color: #f8fafc; padding: 16px; border-radius: 8px; overflow-x: auto; }
+            `,
+            setup: function(editor) {
+                editor.on('init', function() {
+                    editor.save();
+                    if (rawEditor) rawEditor.value = editor.getContent();
+                });
+                editor.on('change keyup input paste NodeChange', function() {
+                    editor.save();
+                    if (rawEditor && activeEditorMode === 'visual') {
+                        rawEditor.value = editor.getContent();
+                    }
+                });
+            }
+        });
+
+        const form = textarea.closest('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                if (activeEditorMode === 'code' && rawEditor) {
+                    textarea.value = rawEditor.value;
+                    const inst = tinymce.get('id_content');
+                    if (inst) inst.setContent(rawEditor.value);
+                } else {
+                    const inst = tinymce.get('id_content');
+                    if (inst) {
+                        inst.save();
+                        textarea.value = inst.getContent();
+                    }
+                }
+            });
+        }
+    });
+
+    function setEditorMode(mode) {
+        if (mode === activeEditorMode) return;
+
+        const visualBtn = document.getElementById('btn-mode-visual');
+        const codeBtn = document.getElementById('btn-mode-code');
+        const textarea = document.getElementById('id_content');
+        const rawEditor = document.getElementById('raw-html-editor');
+        const codeWrapper = document.getElementById('wp-code-editor-wrapper');
+        const tinymceContainer = document.querySelector('.tox-tinymce');
+        const editorInst = tinymce.get('id_content');
+
+        if (mode === 'code') {
+            activeEditorMode = 'code';
+            let htmlContent = editorInst ? editorInst.getContent() : textarea.value;
+            rawEditor.value = htmlContent;
+            textarea.value = htmlContent;
+
+            if (tinymceContainer) tinymceContainer.style.display = 'none';
+            codeWrapper.classList.remove('d-none');
+
+            visualBtn.classList.remove('active', 'btn-primary');
+            visualBtn.classList.add('btn-outline-secondary');
+            codeBtn.classList.add('active', 'btn-primary');
+            codeBtn.classList.remove('btn-outline-secondary');
+
+            rawEditor.focus();
+        } else {
+            activeEditorMode = 'visual';
+            const htmlContent = rawEditor.value;
+            textarea.value = htmlContent;
+
+            if (editorInst) {
+                editorInst.setContent(htmlContent);
+                editorInst.save();
+            }
+
+            codeWrapper.classList.add('d-none');
+            if (tinymceContainer) tinymceContainer.style.display = 'flex';
+
+            codeBtn.classList.remove('active', 'btn-primary');
+            codeBtn.classList.add('btn-outline-secondary');
+            visualBtn.classList.add('active', 'btn-primary');
+            visualBtn.classList.remove('btn-outline-secondary');
+
+            if (editorInst) editorInst.focus();
+        }
+    }
+
+    // Schema Repeating Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const schemaInput = document.getElementById('id_schema_markup');
+        if (schemaInput) {
+            schemaInput.style.display = 'none'; // hide the original textarea
+            
+            let schemas = [];
+            let val = schemaInput.value.trim();
+            if (val) {
+                // If it starts with script tag, remove them
+                if (val.toLowerCase().startsWith('<script') && val.toLowerCase().endsWith('<' + '/script>')) {
+                    val = val.replace(/<\/?script[^>]*>/gi, '').trim();
+                }
+                
+                try {
+                    const parsed = JSON.parse(val);
+                    if (Array.isArray(parsed)) {
+                        schemas = parsed;
+                    } else {
+                        schemas = [parsed];
+                    }
+                } catch(e) {
+                    // Fallback to literal text if parse fails
+                    schemas = [val]; 
+                }
+            } else {
+                schemas = [{}]; // default one empty block
+            }
+            
+            schemas.forEach(s => {
+                const strVal = typeof s === 'string' ? s : (Object.keys(s).length ? JSON.stringify(s, null, 2) : '');
+                addSchemaBlock(strVal);
+            });
+            
+            // On form submit, collect all
+            const form = schemaInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const blocks = document.querySelectorAll('.schema-block-textarea');
+                    let rawStrings = [];
+                    blocks.forEach(b => {
+                        let text = b.value.trim();
+                        if(text.toLowerCase().startsWith('<script')) {
+                            text = text.replace(/<\/?script[^>]*>/gi, '').trim();
+                        }
+                        if (text) {
+                            rawStrings.push(text);
+                        }
+                    });
+                    
+                    if (rawStrings.length === 0) {
+                        schemaInput.value = "";
+                    } else if (rawStrings.length === 1) {
+                        schemaInput.value = rawStrings[0];
+                    } else {
+                        schemaInput.value = "[\n" + rawStrings.join(",\n") + "\n]";
+                    }
+                });
+            }
+        }
+    });
+    
+    function addSchemaBlock(initialValue = '') {
+        const container = document.getElementById('schema-blocks');
+        const block = document.createElement('div');
+        block.className = 'schema-block mb-3 position-relative';
+        
+        const textarea = document.createElement('textarea');
+        textarea.className = 'form-control font-monospace schema-block-textarea';
+        textarea.rows = 6;
+        textarea.placeholder = '{\n  "@context": "https://schema.org",\n  "@type": "Article"\n}';
+        textarea.value = initialValue;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-sm btn-danger position-absolute';
+        removeBtn.style.top = '10px';
+        removeBtn.style.right = '25px';
+        removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        removeBtn.onclick = function() {
+            if (document.querySelectorAll('.schema-block').length > 1) {
+                block.remove();
+            } else {
+                textarea.value = '';
+            }
+        };
+        
+        block.appendChild(textarea);
+        block.appendChild(removeBtn);
+        container.appendChild(block);
+    }
+</script>
+{% endblock %}

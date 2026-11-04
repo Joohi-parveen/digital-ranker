@@ -1,0 +1,650 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{{ action }} Service - AI digital Ranker CMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Actions -->
+    <div class="mb-4">
+        <a href="{% url 'dashboard_service_list' %}"
+            class="text-decoration-none text-muted fw-semibold d-inline-flex align-items-center gap-2"
+            style="font-size: 13.5px; transition: color 0.2s ease;">
+            <i class="fa-solid fa-arrow-left" style="font-size: 11px;"></i> Back to Services
+        </a>
+        <h4 class="mt-3 mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">
+            {{ action }} Service</h4>
+        <p class="text-muted mb-0" style="font-size: 13.5px;">Configure service content and root-level SEO metadata</p>
+    </div>
+
+    <!-- Form Container -->
+    <div class="row">
+        <div class="col-12 col-xl-12">
+            <div class="card-custom">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Section 1: Service Information -->
+                    <h5 class="mb-4 pb-2"
+                        style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        Service Information</h5>
+
+                    <!-- Title -->
+                    <div class="mb-4">
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
+                            Service Title <span class="text-danger" style="color: var(--danger) !important;">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Slug & Status Row -->
+                    <div class="row mb-4">
+                        <div class="col-md-8 mb-3 mb-md-0">
+                            <label for="{{ form.slug.id_for_label }}" class="form-label fw-semibold">
+                                URL Slug (Root-level SEO Path) <span class="text-danger"
+                                    style="color: var(--danger) !important;">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted font-monospace"
+                                    style="font-size: 13px; border-color: var(--border-color);">/</span>
+                                {{ form.slug }}
+                                <span class="input-group-text bg-light text-muted font-monospace"
+                                    style="font-size: 13px; border-color: var(--border-color);">/</span>
+                            </div>
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">
+                                <i class="fa-solid fa-circle-info me-1 text-primary"></i> Live URL will be generated at
+                                the root level (e.g.
+                                <code>https://aidigitalranker.com/answer-engine-optimization/</code>).
+                            </div>
+                            {% if form.slug.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.slug.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold">
+                                Publishing Status
+                            </label>
+                            {{ form.status }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Draft services
+                                are only accessible to administrators.</div>
+                            {% if form.status.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Hero / Banner Content -->
+                    <h5 class="mb-4 pb-2"
+                        style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        Hero / Banner Content</h5>
+
+                    <div class="mb-4">
+                        <label for="{{ form.hero_heading.id_for_label }}" class="form-label fw-semibold">
+                            Hero Heading
+                        </label>
+                        {{ form.hero_heading }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Main headline shown
+                            in the top service banner. Falls back to Service Title if blank.</div>
+                        {% if form.hero_heading.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.hero_heading.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.hero_description.id_for_label }}" class="form-label fw-semibold">
+                            Hero Description
+                        </label>
+                        {{ form.hero_description }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Introductory
+                            paragraph displayed beneath the heading in the banner.</div>
+                        {% if form.hero_description.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.hero_description.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="{{ form.hero_cta_text.id_for_label }}" class="form-label fw-semibold">
+                                Hero CTA Text
+                            </label>
+                            {{ form.hero_cta_text }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Button label
+                                (e.g. Request AI Proposal, Talk to Our Experts).</div>
+                            {% if form.hero_cta_text.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.hero_cta_text.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.hero_cta_url.id_for_label }}" class="form-label fw-semibold">
+                                Hero CTA URL
+                            </label>
+                            {{ form.hero_cta_url }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Button link
+                                destination (defaults to /contact/ if blank).</div>
+                            {% if form.hero_cta_url.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.hero_cta_url.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.hero_banner_image.id_for_label }}" class="form-label fw-semibold">
+                            Custom Hero Banner Background Image
+                        </label>
+                        {{ form.hero_banner_image }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">
+                            Upload a custom banner image for this service page. If left empty, it will automatically use the default banner image.
+                        </div>
+                        {% if service and service.hero_banner_image %}
+                        <div class="mt-3 p-2 bg-light rounded border d-inline-block">
+                            <span class="text-muted d-block mb-1" style="font-size: 11px; font-weight: 600; text-transform: uppercase;">
+                                Active Banner Image:
+                            </span>
+                            <img src="{{ service.hero_banner_image.url }}" alt="{{ service.title }} Banner" class="img-thumbnail" style="max-height: 120px; object-fit: cover;">
+                        </div>
+                        {% endif %}
+                        {% if form.hero_banner_image.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.hero_banner_image.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Section 3: Main Content -->
+                    <h5 class="mb-4 pb-2"
+                        style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        Main Content</h5>
+
+                    <!-- Content -->
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <label for="{{ form.content.id_for_label }}" class="form-label mb-0 fw-semibold">
+                                Service Body Content (HTML) <span class="text-danger"
+                                    style="color: var(--danger) !important;">*</span>
+                            </label>
+
+                            <!-- WordPress Classic Style Visual / Code Mode Switcher -->
+                            <div class="wp-editor-mode-switcher btn-group btn-group-sm" role="group"
+                                aria-label="Editor Mode">
+                                <button type="button"
+                                    class="btn btn-primary active px-3 py-1 fw-semibold editor-mode-tab"
+                                    id="btn-mode-visual" onclick="setEditorMode('visual')">
+                                    <i class="fa-solid fa-pen-nib me-1.5"></i> Visual
+                                </button>
+                                <button type="button"
+                                    class="btn btn-outline-secondary px-3 py-1 fw-semibold editor-mode-tab"
+                                    id="btn-mode-code" onclick="setEditorMode('code')">
+                                    <i class="fa-solid fa-code me-1.5"></i> Code / HTML
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Visual & Code Editor Container -->
+                        <div class="wp-editor-container position-relative">
+                            {{ form.content }}
+
+                            <!-- Raw Code / HTML Editor (WordPress Text Mode) -->
+                            <div id="wp-code-editor-wrapper" class="d-none">
+                                <textarea id="raw-html-editor" class="form-control font-monospace" spellcheck="false"
+                                    rows="18"
+                                    placeholder="<!-- Enter or paste your custom service sections, hero markup, and HTML here -->"></textarea>
+                                <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted"
+                                    style="font-size: 12px;">
+                                    <span><i class="fa-solid fa-circle-info me-1"></i> HTML Mode: Edits are synced to
+                                        the Visual Editor automatically.</span>
+                                    <span>Press <code>Tab</code> to indent</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if form.content.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Section 2: SEO Settings -->
+                    <h5 class="mb-4 pb-2"
+                        style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        Search Engine Optimization (SEO)</h5>
+
+                    <div class="mb-4">
+                        <label for="{{ form.meta_title.id_for_label }}" class="form-label fw-semibold">
+                            Meta Title
+                        </label>
+                        {{ form.meta_title }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Title shown in
+                            Google search results and browser tab. Falls back to Service Title if blank.</div>
+                        {% if form.meta_title.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.meta_title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.meta_description.id_for_label }}" class="form-label fw-semibold">
+                            Meta Description
+                        </label>
+                        {{ form.meta_description }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Snippet summary
+                            shown in search engines (150-160 characters recommended).</div>
+                        {% if form.meta_description.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.meta_description.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="{{ form.meta_keywords.id_for_label }}" class="form-label fw-semibold">
+                                Meta Keywords
+                            </label>
+                            {{ form.meta_keywords }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Comma-separated
+                                keywords (e.g. AI SEO, AEO Services, Delhi Agency).</div>
+                            {% if form.meta_keywords.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.meta_keywords.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.robots_meta.id_for_label }}" class="form-label fw-semibold">
+                                Robots Meta Instructions
+                            </label>
+                            {{ form.robots_meta }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Instruct search
+                                engine crawlers on indexability.</div>
+                            {% if form.robots_meta.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.robots_meta.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="{{ form.canonical_url.id_for_label }}" class="form-label fw-semibold">
+                            Canonical URL
+                        </label>
+                        {{ form.canonical_url }}
+                        <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Preferred URL to
+                            avoid duplicate content. Leave blank to auto-use page URL.</div>
+                        {% if form.canonical_url.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.canonical_url.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Section 3: Open Graph (Social Sharing) -->
+                    <h5 class="mb-4 pb-2"
+                        style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        Open Graph (Social Sharing)</h5>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="{{ form.og_title.id_for_label }}" class="form-label fw-semibold">
+                                Open Graph Title
+                            </label>
+                            {{ form.og_title }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Title shown on
+                                Facebook, LinkedIn, Twitter/X cards.</div>
+                            {% if form.og_title.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.og_title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.og_description.id_for_label }}" class="form-label fw-semibold">
+                                Open Graph Description
+                            </label>
+                            {{ form.og_description }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Description
+                                shown on social media snippet cards.</div>
+                            {% if form.og_description.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                form.og_description.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="{{ form.og_image.id_for_label }}" class="form-label fw-semibold">
+                            Open Graph Share Image
+                        </label>
+                        {{ form.og_image }}
+                        {% if service and service.og_image %}
+                        <div class="mt-3">
+                            <span class="text-muted d-block mb-2"
+                                style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Current
+                                Image:</span>
+                            <img src="{{ service.og_image.url }}" alt="" class="img-thumbnail bg-transparent"
+                                style="max-height: 140px; object-fit: cover; border-color: var(--border-color);">
+                        </div>
+                        {% endif %}
+                        {% if form.og_image.errors %}
+                        <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                            form.og_image.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Form Controls Buttons -->
+                    <div class="d-flex align-items-center justify-content-between mt-5 pt-4 border-top"
+                        style="border-color: var(--border-color) !important;">
+                        <a href="{% url 'dashboard_service_list' %}" class="btn btn-outline-secondary px-4 fw-semibold"
+                            style="border-radius: 10px;">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-5 fw-semibold py-2.5"
+                            style="border-radius: 10px;">
+                            <i class="fa-solid fa-save me-2" style="font-size: 14px;"></i> Save Service
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    /* WordPress Editor Styling & Polish */
+    .wp-editor-mode-switcher .editor-mode-tab {
+        border-radius: 8px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+    .wp-editor-mode-switcher .editor-mode-tab.active {
+        background-color: var(--primary, #6B2E88) !important;
+        border-color: var(--primary, #6B2E88) !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 4px rgba(107, 46, 136, 0.2);
+    }
+
+    /* TinyMCE Shell Customization */
+    .tox-tinymce {
+        border: 1px solid var(--border-color, #e2e8f0) !important;
+        border-radius: 10px !important;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .tox .tox-toolbar,
+    .tox .tox-toolbar__overflow,
+    .tox .tox-toolbar__primary {
+        background-color: #f8fafc !important;
+        border-bottom: 1px solid var(--border-color, #e2e8f0) !important;
+    }
+
+    .tox .tox-tbtn:hover {
+        background: #e2e8f0 !important;
+        color: var(--primary, #6B2E88) !important;
+    }
+
+    .tox .tox-tbtn--enabled,
+    .tox .tox-tbtn--active {
+        background: #ede9fe !important;
+        color: var(--primary, #6B2E88) !important;
+    }
+
+    .tox .tox-statusbar {
+        background-color: #f8fafc !important;
+        border-top: 1px solid var(--border-color, #e2e8f0) !important;
+    }
+
+    /* Raw Code / HTML Editor */
+    #raw-html-editor {
+        min-height: 500px;
+        font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+        font-size: 14px;
+        line-height: 1.65;
+        color: #0f172a;
+        background-color: #ffffff;
+        border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 10px;
+        padding: 16px 20px;
+        resize: vertical;
+        white-space: pre-wrap;
+        tab-size: 4;
+    }
+
+    #raw-html-editor:focus {
+        border-color: var(--primary, #6B2E88);
+        box-shadow: 0 0 0 3px rgba(107, 46, 136, 0.15);
+        outline: none;
+    }
+</style>
+
+<!-- Load TinyMCE 6.8.3 from reliable CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    let activeEditorMode = 'visual';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.querySelector('#id_content');
+        const rawEditor = document.querySelector('#raw-html-editor');
+        if (!textarea) return;
+
+        // Initialize raw editor value with current content
+        if (rawEditor) {
+            rawEditor.value = textarea.value;
+
+            // Sync raw editor back to original textarea
+            rawEditor.addEventListener('input', function () {
+                textarea.value = this.value;
+            });
+
+            // Handle Tab key in Code Mode for easy indentation
+            rawEditor.addEventListener('keydown', function (e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 4;
+                    textarea.value = this.value;
+                }
+            });
+        }
+
+        // Initialize TinyMCE
+        tinymce.init({
+            selector: '#id_content',
+            height: 520,
+            min_height: 420,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'directionality'
+            ],
+            toolbar: [
+                'blocks | bold italic underline strikethrough | link image table | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | blockquote hr | removeformat | code fullscreen preview | undo redo'
+            ],
+            block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Blockquote=blockquote; Preformatted=pre',
+            branding: false,
+            promotion: false,
+            elementpath: true,
+            resize: true,
+            convert_urls: false,
+            relative_urls: false,
+            remove_script_host: false,
+            default_link_target: '_blank',
+            link_assume_external_targets: true,
+            image_title: true,
+            image_caption: true,
+            image_advtab: true,
+            table_responsive_width: true,
+            extended_valid_elements: 'script[type|src|id],style[*],span[*],em[*],i[*],div[*],a[*]',
+            valid_children: '+body[style],+body[script],+div[script|style]',
+            content_style: `
+                body { 
+                    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                    font-size: 15px; 
+                    line-height: 1.8; 
+                    color: #334155; 
+                    padding: 16px 20px;
+                    background-color: #ffffff;
+                }
+                h1, h2, h3, h4, h5, h6 { color: #1e293b; font-weight: 700; margin-top: 1.4em; margin-bottom: 0.6em; line-height: 1.3; }
+                h1 { font-size: 2.2rem; }
+                h2 { font-size: 1.8rem; }
+                h3 { font-size: 1.5rem; }
+                h4 { font-size: 1.25rem; }
+                h5 { font-size: 1.1rem; }
+                h6 { font-size: 1rem; }
+                p { margin-bottom: 1.2em; }
+                a { color: #6B2E88; text-decoration: underline; }
+                blockquote { border-left: 4px solid #6B2E88; margin: 1.5em 0; padding: 12px 20px; background: #f8fafc; font-style: italic; color: #475569; border-radius: 0 8px 8px 0; }
+                table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+                table th, table td { border: 1px solid #e2e8f0; padding: 10px 14px; }
+                table th { background: #f1f5f9; font-weight: 600; }
+                img { max-width: 100%; height: auto; border-radius: 8px; }
+                hr { border: none; border-top: 1px solid #e2e8f0; margin: 2em 0; }
+                ul, ol { padding-left: 24px; margin-bottom: 1.2em; }
+                li { margin-bottom: 0.4em; }
+                code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #d63384; }
+                pre { background: #1e293b; color: #f8fafc; padding: 16px; border-radius: 8px; overflow-x: auto; }
+            `,
+            setup: function (editor) {
+                editor.on('init', function () {
+                    editor.save();
+                    if (rawEditor) rawEditor.value = editor.getContent();
+                    // Set default to Code mode immediately after init
+                    setEditorMode('code');
+                });
+                editor.on('change keyup input paste NodeChange', function () {
+                    editor.save();
+                    if (rawEditor && activeEditorMode === 'visual') {
+                        rawEditor.value = editor.getContent();
+                    }
+                });
+            }
+        });
+
+        // Ensure clean synchronization upon form submission
+        const form = textarea.closest('form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                if (activeEditorMode === 'code' && rawEditor) {
+                    textarea.value = rawEditor.value;
+                    const inst = tinymce.get('id_content');
+                    if (inst) {
+                        inst.setContent(rawEditor.value);
+                    }
+                } else {
+                    const inst = tinymce.get('id_content');
+                    if (inst) {
+                        inst.save();
+                        textarea.value = inst.getContent();
+                    }
+                }
+            });
+        }
+
+        // Initialize simple TinyMCE for Hero Description
+        tinymce.init({
+            selector: '#id_hero_description',
+            height: 250,
+            menubar: false,
+            plugins: ['lists', 'link'],
+            toolbar: ['bold italic underline | bullist numlist | link | removeformat | undo redo'],
+            branding: false,
+            content_style: `
+                body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; color: #334155; padding: 8px 12px; background-color: #ffffff; }
+                p { margin-bottom: 0.8em; }
+                ul, ol { padding-left: 20px; margin-bottom: 0.8em; }
+                li { margin-bottom: 0.3em; }
+                a { color: #6B2E88; text-decoration: underline; }
+            `,
+            setup: function (editor) {
+                editor.on('change keyup input paste NodeChange', function () {
+                    editor.save();
+                });
+            }
+        });
+    });
+
+    // Switch between Visual Mode and Code / HTML Mode
+    function setEditorMode(mode) {
+        if (mode === activeEditorMode) return;
+
+        const visualBtn = document.getElementById('btn-mode-visual');
+        const codeBtn = document.getElementById('btn-mode-code');
+        const textarea = document.getElementById('id_content');
+        const rawEditor = document.getElementById('raw-html-editor');
+        const codeWrapper = document.getElementById('wp-code-editor-wrapper');
+        const editorInst = tinymce.get('id_content');
+        
+        let tinymceContainer = null;
+        if (editorInst) {
+            tinymceContainer = editorInst.getContainer();
+        }
+
+        if (mode === 'code') {
+            activeEditorMode = 'code';
+
+            // Sync from TinyMCE to Code Editor
+            let htmlContent = '';
+            if (editorInst) {
+                htmlContent = editorInst.getContent();
+            } else {
+                htmlContent = textarea.value;
+            }
+
+            rawEditor.value = htmlContent;
+            textarea.value = htmlContent;
+
+            // Toggle Display
+            if (tinymceContainer) tinymceContainer.style.display = 'none';
+            codeWrapper.classList.remove('d-none');
+
+            // Toggle Tab Buttons
+            visualBtn.classList.remove('active', 'btn-primary');
+            visualBtn.classList.add('btn-outline-secondary');
+            codeBtn.classList.add('active', 'btn-primary');
+            codeBtn.classList.remove('btn-outline-secondary');
+
+            rawEditor.focus();
+        } else {
+            activeEditorMode = 'visual';
+
+            // Sync from Code Editor to TinyMCE
+            const htmlContent = rawEditor.value;
+            textarea.value = htmlContent;
+
+            if (editorInst) {
+                editorInst.setContent(htmlContent);
+                editorInst.save();
+            }
+
+            // Toggle Display
+            codeWrapper.classList.add('d-none');
+            if (tinymceContainer) tinymceContainer.style.display = 'flex';
+
+            // Toggle Tab Buttons
+            codeBtn.classList.remove('active', 'btn-primary');
+            codeBtn.classList.add('btn-outline-secondary');
+            visualBtn.classList.add('active', 'btn-primary');
+            visualBtn.classList.remove('btn-outline-secondary');
+
+            if (editorInst) editorInst.focus();
+        }
+    }
+</script>
+{% endblock %}

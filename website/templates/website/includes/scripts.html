@@ -1,0 +1,60 @@
+{% load static %}
+
+<!--====== jQuery ======-->
+<script src="{% static 'assets/js/plugins/jquery-3.7.1.min.js' %}"></script>
+
+<!--====== Popper ======-->
+<script src="{% static 'assets/js/plugins/popper.min.js' %}"></script>
+
+<!--====== Bootstrap ======-->
+<script src="{% static 'assets/js/plugins/bootstrap.min.js' %}"></script>
+
+<!--====== GSAP ======-->
+<script src="{% static 'assets/js/plugins/gsap/gsap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/gsap/SplitText.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/gsap/ScrollSmoother.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/gsap/ScrollTrigger.min.js' %}"></script>
+
+<!--====== Slick ======-->
+<script src="{% static 'assets/js/plugins/slick.min.js' %}"></script>
+
+<!--====== Magnific Popup ======-->
+<script src="{% static 'assets/js/plugins/jquery.magnific-popup.min.js' %}"></script>
+
+<!--====== Waypoints ======-->
+<script src="{% static 'assets/js/plugins/jquery.waypoints.js' %}"></script>
+
+<!--====== CounterUp ======-->
+<script src="{% static 'assets/js/plugins/jquery.counterup.min.js' %}"></script>
+
+<!--====== AOS ======-->
+<script src="{% static 'assets/js/plugins/aos.js' %}"></script>
+
+<!--====== Theme JS ======-->
+<script src="{% static 'assets/js/theme.js' %}"></script>
+
+<!--====== Lead Form Submission UX Handler ======-->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var leadForms = document.querySelectorAll('.lead-submission-form');
+    leadForms.forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                return;
+            }
+            var btn = this.querySelector('button[type="submit"], .submit-btn');
+            if (btn) {
+                // Prevent duplicate clicks
+                if (btn.classList.contains('is-submitting')) {
+                    e.preventDefault();
+                    return false;
+                }
+                btn.classList.add('is-submitting');
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.75';
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Sending...';
+            }
+        });
+    });
+});
+</script>

@@ -1,0 +1,47 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ service.meta_title|default:service.title }}{% if not service.meta_title and seo_settings %} - {{ seo_settings.site_title }}{% endif %}{% endblock %}
+
+{% block meta %}
+{% if service.meta_description %}
+<meta name="description" content="{{ service.meta_description }}">
+{% elif seo_settings %}
+<meta name="description" content="{{ seo_settings.meta_description }}">
+{% endif %}
+
+{% if service.meta_keywords %}
+<meta name="keywords" content="{{ service.meta_keywords }}">
+{% elif seo_settings and seo_settings.meta_keywords %}
+<meta name="keywords" content="{{ seo_settings.meta_keywords }}">
+{% endif %}
+
+<meta name="robots" content="{{ service.robots_meta }}">
+
+{% if service.canonical_url %}
+<link rel="canonical" href="{{ service.canonical_url }}">
+{% else %}
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+{% endif %}
+
+<!-- Open Graph / Social Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ seo_settings.site_title|default:'AI Digital Ranker' }}">
+<meta property="og:title" content="{{ service.og_title|default:service.meta_title|default:service.title }}">
+<meta property="og:description" content="{{ service.og_description|default:service.meta_description|default:seo_settings.meta_description }}">
+<meta property="og:url" content="{{ service.canonical_url|default:request.build_absolute_uri }}">
+{% if service.og_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ service.og_image.url }}">
+{% elif seo_settings and seo_settings.og_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ seo_settings.og_image.url }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% include 'website/components/service-contact-form.html' with service=service %}
+
+{{ service.content|safe }}
+
+
+{% endblock %}

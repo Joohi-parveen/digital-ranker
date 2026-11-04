@@ -1,0 +1,177 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Manage Case Studies - AI digital Ranker CMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Actions -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-5">
+        <div>
+            <h4 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">Case Studies</h4>
+            <p class="text-muted mb-0" style="font-size: 13.5px;">Manage, edit, or publish case studies on your platform</p>
+        </div>
+        <a href="{% url 'dashboard_case_study_create' %}" class="btn btn-primary fw-semibold px-4 py-2.5 d-flex align-items-center gap-2" style="border-radius: 12px;">
+            <i class="fa-solid fa-plus" style="font-size: 14px;"></i> Add New Case Study
+        </a>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="card-custom mb-4 p-4">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-12 col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted" style="border-color: var(--border-color);"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" value="{{ query }}" class="form-control border-start-0 bg-transparent" placeholder="Search by title, client, challenge..." style="font-size: 14px; border-color: var(--border-color); color: var(--text-main) !important;">
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <select name="status" class="form-select bg-transparent text-muted" style="font-size: 14px; border-color: var(--border-color);">
+                    <option value="">All Statuses</option>
+                    <option value="PUBLISHED" {% if status_filter == 'PUBLISHED' %}selected{% endif %}>Published</option>
+                    <option value="DRAFT" {% if status_filter == 'DRAFT' %}selected{% endif %}>Draft</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-semibold px-4" style="border-radius: 10px; font-size: 14px;">Filter</button>
+                {% if query or status_filter %}
+                <a href="{% url 'dashboard_case_study_list' %}" class="btn btn-outline-secondary px-3" style="border-radius: 10px; font-size: 14px;">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card-custom p-3 text-center">
+                <h6 class="text-muted mb-1" style="font-size: 13px;">Total Case Studies</h6>
+                <h3 class="mb-0 fw-bold" style="color: var(--primary);">{{ total_case_studies }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-custom p-3 text-center">
+                <h6 class="text-muted mb-1" style="font-size: 13px;">Published</h6>
+                <h3 class="mb-0 fw-bold text-success">{{ published_case_studies }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-custom p-3 text-center">
+                <h6 class="text-muted mb-1" style="font-size: 13px;">Drafts</h6>
+                <h3 class="mb-0 fw-bold text-warning">{{ draft_case_studies }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Case Studies Table -->
+    <div class="card-custom p-0 overflow-hidden">
+        <div class="table-responsive p-3">
+            <table class="table table-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>Title & Info</th>
+                        <th>Client/Industry</th>
+                        <th>Views</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case_study in page_obj %}
+                    <tr>
+                        <td>
+                             <div class="d-flex align-items-center gap-3 mb-3">
+                                {% if case_study.featured_image %}
+                                <img src="{{ case_study.featured_image.url }}" alt="" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color);">
+                                {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px; border: 1px solid var(--border-color); color: var(--text-main);">
+                                    <i class="fa-solid fa-briefcase" style="font-size: 20px;"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <span class="fw-semibold text-dark d-block mb-1" style="font-size: 14.5px;">{{ case_study.title|truncatechars:45 }}</span>
+                                    <span class="text-muted d-flex align-items-center gap-1" style="font-size: 12px;">
+                                        <i class="fa-solid fa-link" style="font-size: 10px;"></i> /case-studies/{{ case_study.slug }}/
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if case_study.client %}
+                            <span class="badge bg-light text-primary fw-semibold px-2.5 py-1.5" style="border-radius: 8px; font-size: 12px; border: 1px solid rgba(107, 46, 136, 0.15);">
+                                <i class="fa-solid fa-building me-1" style="font-size: 11px;"></i> {{ case_study.client }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted" style="font-size: 12.5px;">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="fw-medium text-dark"><i class="fa-regular fa-eye me-1.5 text-muted"></i>{{ case_study.views_count }}</span>
+                        </td>
+                        <td>
+                            {% if case_study.status == 'PUBLISHED' %}
+                            <span class="badge-published">Published</span>
+                            {% else %}
+                            <span class="badge-draft">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted">{{ case_study.created_at|date:"M d, Y" }}</td>
+                        <td class="text-end">
+                            <!-- Edit -->
+                            <a href="{% url 'dashboard_case_study_update' case_study.slug %}" class="btn-action" title="Edit Case Study">
+                                <i class="fa-solid fa-pen-to-square" style="font-size: 13px;"></i>
+                            </a>
+                            <!-- Delete -->
+                            <a href="{% url 'dashboard_case_study_delete' case_study.slug %}" class="btn-action btn-action-delete" title="Delete Case Study" onclick="return confirm('Are you sure you want to delete this case study?');">
+                                <i class="fa-solid fa-trash-can" style="font-size: 13px;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-briefcase mb-3 text-muted d-block" style="font-size: 44px; opacity: 0.4;"></i>
+                            No case studies found matching your criteria.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        {% if page_obj.has_other_pages %}
+        <div class="p-4 border-top d-flex align-items-center justify-content-between" style="border-color: var(--border-color) !important;">
+            <span class="text-muted" style="font-size: 13px;">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} case studies
+            </span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0 gap-1">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-transparent border-0 text-muted px-3 py-2" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" style="font-weight: 600;">Previous</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item"><span class="page-link border-0 text-white px-3 py-2" style="background: var(--primary); border-radius: 8px; font-weight: 700; box-shadow: 0 4px 10px rgba(107, 46, 136, 0.2);">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link bg-transparent border-0 text-muted px-3 py-2" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" style="border-radius: 8px; font-weight: 600;">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+ 
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-transparent border-0 text-muted px-3 py-2" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" style="font-weight: 600;">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

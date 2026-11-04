@@ -1,0 +1,151 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Dashboard Overview - AI Digital Ranker CMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Stats Cards Row -->
+    <div class="row g-4 mb-5">
+        <!-- Card 1: Total Blogs -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom d-flex align-items-center justify-content-between" style="border-bottom: 3px solid var(--primary);">
+                <div>
+                    <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Total Blog Posts</span>
+                    <h2 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--heading-color);">{{ total_posts }}</h2>
+                </div>
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(107, 46, 136, 0.1); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(107, 46, 136, 0.1);">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Card 2: Active Views -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom d-flex align-items-center justify-content-between" style="border-bottom: 3px solid var(--secondary);">
+                <div>
+                    <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Total Blog Views</span>
+                    <h2 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--heading-color);">{{ total_views }}</h2>
+                </div>
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(124, 58, 237, 0.1); color: var(--secondary); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.1);">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Card 3: Contact Leads -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom d-flex align-items-center justify-content-between" style="border-bottom: 3px solid var(--warning);">
+                <div>
+                    <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Inquiry Leads</span>
+                    <h2 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--heading-color);">{{ total_leads }}</h2>
+                </div>
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); color: var(--warning); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
+                    <i class="fa-solid fa-address-book"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Card 4: Drafts Ratio -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card-custom d-flex align-items-center justify-content-between" style="border-bottom: 3px solid #ec4899;">
+                <div>
+                    <span class="text-muted d-block mb-1" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Drafts / Published</span>
+                    <h2 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--heading-color);">{{ draft_posts }} <span style="font-size: 16px; color: var(--text-muted);">/</span> {{ published_posts }}</h2>
+                </div>
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(236, 72, 153, 0.1); color: #ec4899; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.1);">
+                    <i class="fa-solid fa-pen-ruler"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tables Layout -->
+    <div class="row g-4">
+        <!-- Recent Blogs -->
+        <div class="col-12 col-lg-6">
+            <div class="card-custom p-0 overflow-hidden h-100">
+                <div class="p-4 border-bottom d-flex align-items-center justify-content-between" style="border-color: var(--border-color) !important;">
+                    <h5 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">Recent Blog Posts</h5>
+                    <a href="{% url 'dashboard_blog_list' %}" class="btn btn-sm btn-outline-primary fw-semibold px-3">View All</a>
+                </div>
+                <div class="table-responsive p-3">
+                    <table class="table table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title + Category </th>
+                                <!-- <th></th> -->
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in recent_posts %}
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold text-dark">{{ post.title|truncatechars:30 }}</span>
+                                    {% if post.category %}
+                                    <span class="badge bg-light text-primary fw-semibold px-2 py-1" style="border-radius: 6px; font-size: 11px;">{{ post.category.name|truncatechars:18 }}</span>
+                                    {% else %}
+                                    <span class="text-muted" style="font-size: 11px;">Uncategorized</span>
+                                    {% endif %}
+                                </td>
+                                <!-- <td>
+                                    
+                                </td> -->
+                                <td>
+                                    {% if post.status == 'PUBLISHED' %}
+                                    <span class="badge-published">Published</span>
+                                    {% else %}
+                                    <span class="badge-draft">Draft</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted">{{ post.created_at|date:"M d, Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No blog posts available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Inquiries -->
+        <div class="col-12 col-lg-6">
+            <div class="card-custom p-0 overflow-hidden h-100">
+                <div class="p-4 border-bottom d-flex align-items-center justify-content-between" style="border-color: var(--border-color) !important;">
+                    <h5 class="mb-0" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">Recent Contact Leads</h5>
+                    <a href="{% url 'dashboard_lead_list' %}" class="btn btn-sm btn-outline-primary fw-semibold px-3">View All</a>
+                </div>
+                <div class="table-responsive p-3">
+                    <table class="table table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lead in recent_leads %}
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold text-dark">{{ lead.name }}</span>
+                                </td>
+                                <td class="text-muted">{{ lead.subject|truncatechars:30 }}</td>
+                                <td class="text-muted">{{ lead.created_at|date:"M d, H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No inquiry messages received yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

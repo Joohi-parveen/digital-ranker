@@ -1,0 +1,265 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ case_study.meta_title|default:case_study.title }}{% endblock %}
+
+{% block meta %}
+<meta name="description"
+    content="{{ case_study.meta_description|default:case_study.content|striptags|truncatechars:160 }}">
+{% if case_study.meta_keywords %}
+<meta name="keywords" content="{{ case_study.meta_keywords }}">
+{% endif %}
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+
+<!-- Open Graph / Social Media Meta Tags -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ case_study.meta_title|default:case_study.title }}">
+<meta property="og:description"
+    content="{{ case_study.meta_description|default:case_study.content|striptags|truncatechars:160 }}">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+{% if case_study.featured_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ case_study.featured_image.url }}">
+{% endif %}
+
+{% if case_study.schema_markup %}
+{% for schema in case_study.get_schema_markup_list %}
+<script type="application/ld+json">
+{{ schema|safe }}
+    </script>
+{% endfor %}
+{% endif %}
+
+<style>
+    /* 
+       Override body overflow-x: clip from style.css. 
+       Any hidden/clip overflow on the body tag permanently breaks position: sticky 
+       in modern browsers. This makes the sidebar sticky again!
+    */
+    body {
+        overflow-x: visible !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<section class="page-hero bg_cover p-r z-1" data-src="{% static 'assets/images/page-bg.jpg' %}"
+    style="background-image: url(&quot;{% static 'assets/images/page-bg.jpg' %}&quot;);   background-position: left; ">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="page-content text-center">
+                    <div class="text-white h1">Case Study</div>
+                    <ul class="breadcrumb-nav"> <li><a href="{% url 'home' %}">Home</a></li> <li><a href="{% url 'case_study_list' %}" class="text-white"> Case Study</a></li> <li class="text-white"> {{ case_study.title }}</li> </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="orbia-blog-details-sec pt-80 pb-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-8">
+
+                <div class="blog-details-wrapper">
+
+                    <div class="blog-post-main">
+                        <div class="blog-post-item">
+
+                            <h1 class="title mb-4">{{ case_study.title }}</h1>
+
+                            <div class="post-meta mb-3 d-flex flex-wrap align-items-center gap-2" style="font-size: 13px; color: #777;"> 
+                                <span class="d-flex align-items-center gap-1"><i class="fa fa-calendar me-1"></i>  {{ case_study.created_at|date:"M d, Y" }}
+                                </span> 
+                                <span class="d-flex align-items-center gap-1"><i class="fa fa-eye me-1"></i> {{ case_study.views_count }} </span> 
+                                {% if case_study.client %}
+                                <span class="d-flex align-items-center gap-1"><i class="fa fa-building me-1"></i> Client: {{ case_study.client }} </span> 
+                                {% endif %}
+                            </div>
+
+                            {% if case_study.featured_image %}
+                            <div class="post-thumbnail mb-4" style="overflow: hidden; border-radius: 8px;">
+                                <img src="{{ case_study.featured_image.url }}" alt="{{ case_study.title }}" class="img-fluid w-100">
+                            </div>
+                            {% endif %}
+
+                            <div class="post-content">
+                                <div class="post-body">
+                                    {% if case_study.content %}
+                                        {{ case_study.content|safe }}
+                                    {% endif %}
+                                </div>
+
+                                {% if case_study.faqs.exists %}
+                                <div class="faq-section mt-5 faq-section-detail">
+                                    {% if case_study.faq_heading %}
+                                    <h2 class="mb-4">{{ case_study.faq_heading }}</h2>
+                                    {% else %}
+                                    <h2 class="mb-4">Frequently Asked Questions</h2>
+                                    {% endif %}
+                                    <div class="accordion" id="faqAccordion">
+                                        {% for faq in case_study.faqs.all %}
+                                        <div class="accordion-card style-two mb-20">
+                                            <div class="accordion-header">
+                                                <h3 class="accordion-title" data-bs-toggle="collapse" data-bs-target="#collapseFaq{{ faq.id }}">
+                                                    {{ faq.question }}
+                                                </h3>
+                                            </div>
+                                            <div id="collapseFaq{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                                <div class="accordion-content">
+                                                    {{ faq.answer|linebreaks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+
+                <div class="sidebar-widget-area" style="z-index: 10;">
+
+
+                    {% if recent_case_studies %}
+                    <div class="sidebar-widget sidebar-post-widget mb-40"> <div class="widget-title mb-3 pb-2 border-bottom h4">Other Case Studies</div> <div class="widget-content"> <ul class="recent-post-list list-unstyled"> {% for recent in recent_case_studies %} <li class="post-thumbnail-content d-flex mb-4 align-items-center"> <div class="flex-shrink-0 me-3" style="width: 80px; height: 60px; overflow: hidden; border-radius: 4px;"> {% if recent.featured_image %} <img src="{{ recent.featured_image.url }}" alt="{{ recent.title }}" style="width: 100%; height: 100%; object-fit: cover;"> {% else %} <img src="{% static 'assets/images/innerpage/blog/blog-grid-img1.jpg' %}" alt="{{ recent.title }}" style="width: 100%; height: 100%; object-fit: cover;"> {% endif %} </div> <div class="post-title-date"> <span class="posted-on text-muted">{{ recent.created_at|date:"M d, Y" }}</span> <div class="mb-0 h6"> <a href="{% url 'case_study_detail' recent.slug %}" class="">{{ recent.title }}</a> </div> </div> </li> {% endfor %} </ul> </div> </div>
+                    {% endif %}
+
+
+                    <!-- Enquiry Form -->
+                    <div class="sidebar-widget sidebar-form-widget mb-40">
+                        <div class="widget-title mb-3 pb-2 border-bottom h4">Start Your Project</div>
+                        <div class="widget-content">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.tags != 'success' %}
+                                    <div class="alert alert-danger alert-dismissible fade show text-start mb-3" role="alert" style="font-size: 14px; padding: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="padding: 12px;"></button>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            <form class="lead-submission-form" method="post" action="{% url 'contact' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="subject" value="Case Study Enquiry: {{ case_study.title }}">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <div class="form-group">
+                                            <input type="text" class="form_control w-100" placeholder="Your Name *" name="name" required style="border: 1px solid #ddd; padding: 10px 15px; border-radius: 4px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="form-group">
+                                            <input type="email" class="form_control w-100" placeholder="Email Address *" name="email" required style="border: 1px solid #ddd; padding: 10px 15px; border-radius: 4px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="form-group">
+                                            <input type="tel" class="form_control w-100" placeholder="Phone Number *" name="phone" required style="border: 1px solid #ddd; padding: 10px 15px; border-radius: 4px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="form-group">
+                                            <textarea class="form_control w-100" placeholder="Message" rows="4" name="message" style="border: 1px solid #ddd; padding: 10px 15px; border-radius: 4px;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="theme-btn gradient-btn submit-btn w-100" style="width: 100%; border-radius: 4px; padding: 12px;">Send Enquiry <i class="fa fa-arrow-right"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Make all tables in content responsive
+        const tables = document.querySelectorAll(".post-body table");
+        tables.forEach(table => {
+            if (!table.parentElement.classList.contains("table-responsive")) {
+                const wrapper = document.createElement("div");
+                wrapper.className = "table-responsive";
+                // Transfer basic styling
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+
+                // Ensure table has Bootstrap table class
+                if (!table.classList.contains("table")) {
+                    table.classList.add("table", "table-bordered", "table-striped");
+                }
+            }
+        });
+
+        // GSAP ScrollTrigger Pinning for Sidebar inside ScrollSmoother
+        setTimeout(function () {
+            if (typeof ScrollTrigger !== 'undefined') {
+                let sidebar = document.querySelector(".sidebar-widget-area");
+                let mainContent = document.querySelector(".col-xl-8");
+                
+                ScrollTrigger.matchMedia({
+                    "(min-width: 1200px)": function () {
+                        if (sidebar && mainContent && sidebar.offsetHeight < mainContent.offsetHeight) {
+                            ScrollTrigger.create({
+                                trigger: sidebar,
+                                start: "top 50px",
+                                end: () => "+=" + (mainContent.offsetHeight - sidebar.offsetHeight),
+                                pin: true,
+                                pinSpacing: false
+                            });
+                        }
+                    }
+                });
+            }
+        }, 500);
+    });
+</script>
+
+{% if case_study.faqs.exists %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in case_study.faqs.all %}
+    {
+      "@type": "Question",
+      "name": "{{ faq.question|escapejs }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ faq.answer|escapejs }}"
+      }
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+
+{% endblock %}

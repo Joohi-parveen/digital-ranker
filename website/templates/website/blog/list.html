@@ -1,0 +1,188 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}Blog - Our Latest Insights & Updates{% endblock %}
+
+{% block content %}
+<!--====== Start Page Hero Section ======-->
+<section class="page-hero bg_cover p-r z-1" data-src="{% static 'assets/images/page-bg.jpg' %}"
+    style="background-image: url(&quot;{% static 'assets/images/page-bg.jpg' %}&quot;);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!--=== Page Content ===-->
+                <div class="page-content text-center">
+                    <h1 class="text-white">Our Blog</h1>
+                    <ul class="breadcrumb-nav">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li class="text-white">/ Blog</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End Page Hero Section ======-->
+
+<!--====== Start Blog Section ======-->
+<section class="orbia-blog-grid-sec pt-80 pb-80">
+    <div class="container">
+        <div class="section-title text-center mb-3">
+            <h2 class="text-anm">The <span> Knowledge Hub for AI </span> Search Success</h2>
+        </div>
+        {% if request.user.is_staff %}
+        <div class="row mb-5">
+            <!--<div class="col-12 text-end">-->
+            <!--    <a href="{% url 'blog_create' %}" class="theme-btn gradient-btn" ><i class="fa-solid fa-plus me-2"></i>Create New Blog Post</a>-->
+            <!--</div>-->
+        </div>
+        {% endif %}
+        <!-- Category Filter Tabs / Pills -->
+        {% if categories %}
+        <div class="row mb-4 d-none">
+            <div class="col-12">
+                <div class="d-flex flex-wrap align-items-center gap-2 pb-2">
+                    <span class="text-muted fw-semibold me-2" style="font-size: 14px;"><i
+                            class="fa-solid fa-filter me-1"></i> Topics:</span>
+                    <a href="{% url 'blog_list' %}{% if query %}?q={{ query }}{% endif %}"
+                        class="btn btn-sm {% if not category_slug %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1.5"
+                        style="font-size: 13px; font-weight: 600;">
+                        All Articles
+                    </a>
+                    {% for cat in categories %}
+                    <a href="{% url 'blog_category' cat.slug %}{% if query %}?q={{ query }}{% endif %}"
+                        class="btn btn-sm {% if category_slug == cat.slug %}btn-primary text-white{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1.5"
+                        style="font-size: 13px; font-weight: 600;">
+                        {{ cat.name }} ({{ cat.blog_count }})
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filter / Search Info Banner -->
+        {% if query or selected_category %}
+        <div class="row mb-4 d-none">
+            <div class="col-12 d-flex justify-content-between align-items-center p-3 rounded"
+                style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+                <div>
+                    {% if selected_category %}
+                    <span class="me-3">Category: <strong class="text-primary">{{ selected_category.name }}</strong></span>
+                    {% endif %}
+                    {% if query %}
+                    <span>Search: "<strong class="text-primary">{{ query }}</strong>"</span>
+                    {% endif %}
+                    <span class="text-muted ms-2">({{ total_count }} {{ total_count|pluralize:"article,articles" }}
+                        found)</span>
+                </div>
+                <a href="{% url 'blog_list' %}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            {% for post in page_obj %}
+            <div class="col-xl-4 col-md-6 col-sm-12 mb-4">
+                <!-- Blog Post Item -->
+                <div class="orbia-blog-post-item style-one position-relative">
+                    <div class="post-thumbnail position-relative" style="overflow: hidden; height: 240px;">
+                        {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                        {% else %}
+                        <img src="{% static 'assets/images/innerpage/blog/blog-grid-img1.jpg' %}" alt="{{ post.title }}">
+                        {% endif %}
+                        {% if post.category %}
+                        <a href="{% url 'blog_category' post.category.slug %}" class="bg-category">
+                            {{ post.category.name }}
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta mb-2 d-flex flex-wrap align-items-center gap-2" style="font-size: 13px; color: #777;">
+                            <span class="d-flex align-items-center gap-1"> <a href="https://www.linkedin.com/in/saddam-irshad-b4500a53?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="d-flex align-items-center gap-1"> <img src="{% static 'assets/images/saddam01.jpg' %}" alt="Saddam Irshad" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;"> Saddam Irshad </a> </span> <span class="d-flex align-items-center gap-1"><i class="fa fa-calendar me-1"></i> {{ post.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="title mb-3">
+                            <a href="{% url 'blog_detail' post.slug %}" class="text-dark hover-primary">{{ post.title }}</a>
+                        </h3>
+                        {% if post.excerpt %}
+                        <p class="mb-4">{{ post.excerpt|truncatewords:20 }}</p>
+                        {% else %}
+                        <p class="mb-4">{{ post.content|striptags|truncatewords:20 }}</p>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <a href="{% url 'blog_detail' post.slug %}"
+                                class="read-more style-one  font-weight-bold">
+                                Read More <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
+                            {% if request.user.is_staff %}
+                            <div class="d-flex gap-2 d-none">
+                                <a href="{% url 'blog_update' post.slug %}"
+                                    class="btn btn-sm btn-outline-secondary py-1 px-2"
+                                    style="font-size: 12px; border-radius: 6px;" title="Edit Post"><i
+                                        class="fa-solid fa-pen"></i></a>
+                                <a href="{% url 'blog_delete' post.slug %}"
+                                    class="btn btn-sm btn-outline-danger py-1 px-2"
+                                    style="font-size: 12px; border-radius: 6px;" title="Delete Post"><i
+                                        class="fa-solid fa-trash"></i></a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <h3>No blog posts found.</h3>
+                <p class="text-muted">Check back later or try a different filter or search query!</p>
+                {% if query or category_slug %}
+                <a href="{% url 'blog_list' %}" class="btn btn-primary mt-3">Reset Filters</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="theme-pagination text-center mt-30">
+                    <ul class="d-inline-flex list-unstyled align-items-center justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="mx-1">
+                            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}"
+                                class="btn btn-outline-primary" style="padding: 10px 15px;">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="mx-1">
+                            <span class="btn btn-primary active" style="padding: 10px 18px;">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="mx-1">
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}"
+                                class="btn btn-outline-primary" style="padding: 10px 18px;">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                            <li class="mx-1">
+                                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}"
+                                    class="btn btn-outline-primary" style="padding: 10px 15px;">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+<!--====== End Blog Section ======-->
+{% endblock %}

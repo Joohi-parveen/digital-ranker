@@ -1,0 +1,119 @@
+{% extends 'website/layouts/base.html' %}
+{% load static %}
+
+{% block title %}Case Studies - Our Success Stories{% endblock %}
+
+{% block content %}
+<!--====== Start Page Hero Section ======-->
+<section class="page-hero bg_cover p-r z-1" data-src="{% static 'assets/images/page-bg.jpg' %}"
+    style="background-image: url(&quot;{% static 'assets/images/page-bg.jpg' %}&quot;);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!--=== Page Content ===-->
+                <div class="page-content text-center">
+                    <h1 class="text-white">Our Case Studies</h1>
+                    <ul class="breadcrumb-nav">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li class="text-white">/ Case Studies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--====== End Page Hero Section ======-->
+
+<!--====== Start Case Study Section ======-->
+<section class="orbia-blog-grid-sec pt-80 pb-80">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2 class="text-anm">Our <span> Success Stories </span> & Impact</h2>
+        </div>
+        
+        <div class="row">
+            {% for case_study in page_obj %}
+            <div class="col-xl-4 col-md-6 col-sm-12 mb-4">
+                <!-- Case Study Item -->
+                <div class="orbia-blog-post-item style-one position-relative">
+                    <div class="post-thumbnail position-relative" style="overflow: hidden; height: 250px;">
+                        {% if case_study.featured_image %}
+                        <img src="{{ case_study.featured_image.url }}" alt="{{ case_study.title }}">
+                        {% else %}
+                        <img src="{% static 'assets/images/innerpage/blog/blog-grid-img1.jpg' %}" alt="{{ case_study.title }}">
+                        {% endif %}
+                        {% if case_study.client %}
+                        <span class="bg-category">
+                            {{ case_study.client }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta mb-2 d-flex flex-wrap align-items-center gap-2" style="font-size: 13px; color: #777;">
+                            <span class="d-flex align-items-center gap-1"><i class="fa fa-calendar me-1"></i> {{ case_study.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="title mb-3">
+                            <a href="{% url 'case_study_detail' case_study.slug %}" class="text-dark hover-primary">{{ case_study.title }}</a>
+                        </h3>
+                        <p class="mb-0">{{ case_study.content|striptags|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                            <a href="{% url 'case_study_detail' case_study.slug %}"
+                                class="read-more style-one font-weight-bold">
+                                Read Case Study <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <h3>No case studies found.</h3>
+                <p class="text-muted">Check back later for our latest success stories!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="theme-pagination text-center mt-30">
+                    <ul class="d-inline-flex list-unstyled align-items-center justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="mx-1">
+                            <a href="?page={{ page_obj.previous_page_number }}"
+                                class="btn btn-outline-primary" style="padding: 10px 15px;">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="mx-1">
+                            <span class="btn btn-primary active" style="padding: 10px 18px;">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="mx-1">
+                            <a href="?page={{ num }}"
+                                class="btn btn-outline-primary" style="padding: 10px 18px;">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                            <li class="mx-1">
+                                <a href="?page={{ page_obj.next_page_number }}"
+                                    class="btn btn-outline-primary" style="padding: 10px 15px;">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+<!--====== End Case Study Section ======-->
+{% endblock %}

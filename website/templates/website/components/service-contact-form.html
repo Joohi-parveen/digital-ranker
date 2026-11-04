@@ -1,0 +1,219 @@
+{% load static %}
+
+<!--====== Start Common Service Contact Section ======-->
+<section class="orbia-hero_one orbia-contact_one inner-banner-section">
+    {% if service.hero_banner_image %}
+    <div class="hero-wrapper inner-hero-wrapper bg_cover" data-src="{{ service.hero_banner_image.url }}" style="background-image: url(&quot;{{ service.hero_banner_image.url }}&quot;);">
+    {% else %}
+    <div class="hero-wrapper inner-hero-wrapper bg_cover" data-src="{% static 'assets/images/delhi-banner.jpg' %}" style="background-image: url(&quot;{% static 'assets/images/delhi-banner.jpg' %}&quot;);">
+    {% endif %}
+        <div class="container-fluid">
+            <div class="row justify-content-center justify-content-lg-start align-items-center">
+                <div class="col-xl-6 col-lg-6">
+                    <div class="hero-content inner-hero-content text-center text-lg-start">
+                        <h1 class="text-anm text-white inner-banner-title">
+                            {% if service.hero_heading %}{{ service.hero_heading|safe }}{% elif service %}{{ service.title|safe }}{% else %}Build Lasting AI Visibility with Our AI SEO Agency{% endif %}
+                        </h1>
+                        {% if service.hero_description %}
+                        <div class="hero-desc-wrapper" data-aos="fade-up" data-aos-duration="1500">
+                            {{ service.hero_description|safe }}
+                        </div>
+                        {% elif not service %}
+                        <p data-aos="fade-up" data-aos-duration="1500">
+                            Stay ahead in the evolving AI search landscape with future-ready optimization solutions. Strengthen your presence across leading AI search engines, helping businesses achieve sustainable AI search visibility and long-term growth.
+                        </p>
+                        {% endif %}
+
+                        <div class="inner-banner-infos">
+                            <div class="inner-banner-info-box">
+                                <div class="icon">
+                                   <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <div class="info-content">
+                                    AI Search <br> Optimization 
+                                </div>
+                            </div>
+
+                            <div class="inner-banner-info-box">
+                                <div class="icon">
+                                    <i class="fa-regular fa-comment-dots"></i>
+                                </div>
+                                <div class="info-content">
+                                    Answer Engine <br> Optimization (AEO)
+                                </div>
+                            </div>
+
+                            <div class="inner-banner-info-box">
+                                <div class="icon">
+                                    <i class="fa-solid fa-ranking-star"></i>
+                                </div>
+                                <div class="info-content">
+                                    Generative Engine <br> Optimization (GEO)
+                                </div>
+                            </div>
+
+                            <div class="inner-banner-info-box">
+                                <div class="icon">
+                                    <i class="fa-solid fa-shield-virus"></i>
+                                </div>
+                                <div class="info-content">
+                                    Technical SEO <br> & AI Visibility 
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex align-items-center flex-wrap gap-4 justify-content-center justify-content-lg-start">
+                            {% if service.hero_cta_text or not service %}
+                            <div class="hero-button-wrap">
+                                <div class="orbia-button" data-aos="fade-up" data-aos-duration="1500">
+                                    <a href="{% if service.hero_cta_url %}{{ service.hero_cta_url }}{% else %}{% url 'contact' %}{% endif %}" class="theme-btn gradient-btn">
+                                        {{ service.hero_cta_text|default:'Request AI Proposal' }} <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="orbia-button" data-aos="fade-up" data-aos-duration="1500">
+                                <a href="tel:8929 222 448" class="inner-contact-btn">
+                                    <i class="fa-solid fa-phone"></i>  Talk to an AI SEO Expert  
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 align-content-center mb-3">
+                    <div class="orbia-contact-wrapper inner-contact-form" data-aos="fade-up" data-aos-duration="1000">
+                        <div class="h3 mb-0">Get Your Free AI SEO Consultation</div>
+                        <p class="mb-3">Find out where your website stands and which opportunities to priortize next.</p>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show p-2 mb-3" role="alert" style="font-size: 13.5px; border-radius: 8px;">
+                                    {{ message }}
+                                    <button type="button" class="btn-close p-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form class="orbia-contact-form lead-submission-form" action="{% url 'contact' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <input type="hidden" name="subject" value="Service Inquiry: {% if service %}{{ service.title }}{% else %}General Service{% endif %}">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group icon-form-grp">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                                        </svg>
+                                        <input type="text" class="form_control" placeholder="Your Name" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group icon-form-grp">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                        </svg>
+                                        <input type="email" class="form_control" placeholder="Email Address" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group icon-form-grp">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                                            <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/>
+                                        </svg>
+                                        <input type="text" class="form_control" placeholder="Phone Number" name="phone" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group icon-form-grp">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-dots" viewBox="0 0 16 16">
+                                            <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                            <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                                        </svg>
+                                        <textarea class="form_control" placeholder="Message" name="message" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 mt-1">
+                                    <div class="form-group">
+                                        <button type="submit" class="theme-btn gradient-btn submit-btn"> Free AI SEO Consultation  <i class="fa fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="inner-banner-strip">
+    <div class="container">
+        <div class="inner-strip-parts">
+            <div class="inner-strip-usp">
+                <div class="usp-box">
+                    <img src="{% static 'assets/images/usp-1.png' %}" alt="">
+                    <div class="usp-info">
+                        <span>10+ Years</span> of SEO Experience
+                    </div>
+                </div>
+                <div class="usp-box">
+                    <img src="{% static 'assets/images/usp-2.png' %}" alt="">
+                    <div class="usp-info">
+                        <span>50+</span> Industry Specialists
+                    </div>
+                </div>
+                <div class="usp-box">
+                    <img src="{% static 'assets/images/usp-3.png' %}" alt="">
+                    <div class="usp-info">
+                        <span>1100+ </span>Client Worldwide 
+                    </div>
+                </div>
+                <div class="usp-box">
+                    <img src="{% static 'assets/images/usp-4.png' %}" alt="">
+                    <div class="usp-info">
+                        <span>4.8/5</span>Client Ratings
+                    </div>
+                </div>
+            </div>
+            <div class="inner-strip-cta">
+                <div class="strip-cta-box">
+                    <img src="{% static 'assets/images/usp-5.png' %}" alt="">
+                    <div>
+                        Trusted by business across 
+                        <span>Delhi NCR and beyond </span>
+                    </div>
+                </div>
+                <div class="strip-area-list">
+                    <div class="strip-area-info">
+                        <div class="strip-area-icon">
+                            <img src="https://images.unsplash.com/photo-1722165923691-dc77d229a31a?q=80&w=436&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D" alt="">
+                        </div>
+                        Connaught Place 
+                    </div>
+                    <div class="strip-area-info">
+                        <div class="strip-area-icon">
+                            <img src="https://images.unsplash.com/photo-1688139885160-bb49f176ae2e?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D" alt="">
+                        </div>
+                        Gurugram 
+                    </div>
+                    <div class="strip-area-info">
+                        <div class="strip-area-icon">
+                            <img src="https://images.unsplash.com/photo-1564834552305-aea63611ff08?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D" alt="">
+                        </div>
+                        Noida 
+                    </div>
+                    <div class="strip-area-info">
+                        <div class="strip-area-icon">
+                            <img src="https://images.unsplash.com/photo-1669042270635-a00f107471be?q=80&w=327&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D" alt="">
+                        </div>
+                        Dwarka 
+                    </div>
+                </div>
+            </div>
+        </div>   
+    </div>
+</section>
+
+<!--====== End Common Service Contact Section ======-->

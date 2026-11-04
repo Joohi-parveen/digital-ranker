@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI digital Ranker CMS Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6B2E88;
+            --primary-hover: #5A2575;
+            --secondary: #7C3AED;
+            --accent: #A855F7;
+            --bg-workspace: #F8FAFC;
+            --heading-color: #2A245C;
+            --text-main: #64748B;
+            --border-color: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-workspace);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Spotlights */
+        .glow-1 {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(107, 46, 136, 0.04) 0%, rgba(248, 250, 252, 0) 70%);
+            top: 15%;
+            left: 20%;
+            pointer-events: none;
+        }
+
+        .glow-2 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, rgba(248, 250, 252, 0) 70%);
+            bottom: 15%;
+            right: 20%;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 440px;
+            padding: 45px;
+            box-shadow: 0 15px 35px rgba(42, 36, 92, 0.05);
+            z-index: 10;
+            position: relative;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--heading-color);
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .brand-logo i {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(107, 46, 136, 0.15));
+        }
+
+        .brand-logo span {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-label {
+            color: var(--heading-color);
+            font-weight: 600;
+            font-size: 13.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-group-text {
+            background-color: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            color: #64748b;
+            padding-left: 16px;
+            padding-right: 12px;
+            border-top-left-radius: 12px !important;
+            border-bottom-left-radius: 12px !important;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: #334155 !important;
+            padding: 12px 18px 12px 6px;
+            font-size: 15px;
+            border-top-right-radius: 12px !important;
+            border-bottom-right-radius: 12px !important;
+            transition: all 0.25s ease;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 46, 136, 0.15);
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(107, 46, 136, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 10px 25px rgba(107, 46, 136, 0.3);
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .alert-custom {
+            background-color: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: var(--danger);
+            font-size: 13.5px;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <div class="brand-logo">
+                <i class="fa-solid fa-shapes"></i> AI Digital <span> Ranker </span>
+            </div>
+            <div class="login-subtitle">Control Center Portal Authentication</div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-custom d-flex align-items-center gap-3">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 16px;"></i>
+                    <div>{{ message }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="username_field" class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    {{ form.username }}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="password_field" class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    {{ form.password }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login">
+                <i class="fa-solid fa-right-to-bracket me-2"></i> Log In to Dashboard
+            </button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+{% load static %}
+
+    <header class="header-area header-one transparent-header">
+
+        <div class="header-navigation">
+            <div class="container-fluid">
+
+                <div class="top-menu">
+                    <ul class="top-menu-list top-infos d-flex">
+                        <li class="top-item">
+                            <a href="tel:8929 222 448">
+                                <i class="fa fa-phone"></i> 8929 222 448
+
+                            </a>
+                        </li>
+                        <li class="top-item">
+                            <a href="mailto:sales@aidigitalranker.com">
+                                <i class="fa fa-envelope"></i> sales@aidigitalranker.com
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="top-menu-list top-icons d-flex">
+                        <li><a href="https://www.facebook.com/profile.php?id=61593993022403" target="_blank" aria-label="Visit us on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a></li>
+                        <li><a href="https://www.instagram.com/aidigitalranker?igsi=MW8xaW5nMWlwNTdrMA==" target="_blank" aria-label="Visit us on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>
+                        <li><a href="https://www.linkedin.com/company/ai-digital-ranker" target="_blank" aria-label="Visit us on LinkedIn"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a></li>
+                        <li><a href="https://www.youtube.com/@AIDigitalRanker"><i class="fa-brands fa-youtube"></i></a></li>
+                    </ul>
+                </div>
+
+                <div class="primary-menu">
+
+                    <div class="site-branding">
+                        <a href="{% url 'home' %}" class="brand-logo"><img src="{% static 'assets/images/sideline-logo.png' %}"
+                                alt="Ai digital Ranker Logo"></a>
+                    </div>
+
+                    <div class="theme-nav-menu">
+
+                        <div class="theme-menu-top d-block d-xl-none">
+                            <div class="site-branding">
+                                <a href="{% url 'home' %}" class="brand-logo"><img src="{% static 'assets/images/logo-2.webp' %}"
+                                        alt="Ai digital Ranker"></a>
+                            </div>
+                        </div>
+
+                        <nav class="main-menu">
+                            <ul>
+                                <li class="menu-item"><a href="{% url 'home' %}" aria-label="Home"><i class="fas fa-home"></i></a></li>
+                                <li class="menu-item has-children"><a href="#">AI SEO Services</a>
+                                    <ul class="sub-menu">
+                                        <li><a href="{% url 'service_detail' 'ai-seo-agency-india' %}"> AI SEO Agency India </a></li>
+                                        <li><a href="{% url 'service_detail' 'ai-seo-agency-delhi' %}"> AI SEO Agency Delhi </a></li>
+                                        <li><a href="{% url 'service_detail' 'answer-engine-optimization-services' %}"> AEO Service </a></li>
+                                        <li><a href="{% url 'service_detail' 'generative-engine-optimization-services' %}"> GEO Service </a></li>
+                                    </ul>
+                                </li>
+                                <li class="menu-item"><a href="https://aidigitalranker.com/">Industries</a> </li>
+                                <li class="menu-item"><a href="{% url 'case_study_list' %}">Case Studies</a></li>
+                                <li class="menu-item"><a href="{% url 'blog_list' %}">Blog</a></li>
+                                <li class="menu-item"><a href="{% url 'contact' %}">Contact Us</a></li>
+                            </ul>
+                        </nav>
+
+
+                        <!-- <div class="theme-nav-button mt-20 d-block d-md-none">
+                            <a href="#" class="theme-btn gradient-btn">Get Free AI SEO Audit<i
+                                    class="fa fa-arrow-right"></i></a>
+                        </div> -->
+
+                        <div class="theme-menu-bottom mt-3 d-block d-xl-none">
+                            <p class="mb-3">Follow Us</p>
+                            <ul class="social-link">
+                                <li><a href="https://www.facebook.com/profile.php?id=61593993022403" aria-label="Visit us on Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a></li>
+                                <li><a href="https://www.instagram.com/aidigitalranker?igsi=MW8xaW5nMWlwNTdrMA==" aria-label="Visit us on Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a></li>
+                                <li><a href="https://www.linkedin.com/company/ai-digital-ranker" aria-label="Visit us on LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="nav-right-item ">
+                        <div class="nav-button d-md-block sticky-btn">
+                            <a href="https://aidigitalranker.com/contact/" class="theme-btn gradient-btn">Get Free AI SEO Audit<i
+                                    class="fa fa-arrow-right"></i></a>
+                        </div>
+                        <div class="navbar-toggler">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
+            <main>

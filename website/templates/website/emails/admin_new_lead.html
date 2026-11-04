@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Inquiry Received - AI Digital Ranker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 24px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 620px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            padding: 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        .badge {
+            display: inline-block;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .content {
+            padding: 32px 30px;
+        }
+        .lead-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 24px;
+        }
+        .lead-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            vertical-align: top;
+        }
+        .lead-table td.label {
+            font-weight: 600;
+            color: #64748b;
+            width: 32%;
+            background-color: #f8fafc;
+            border-right: 1px solid #f1f5f9;
+        }
+        .lead-table td.value {
+            color: #0f172a;
+            font-weight: 500;
+        }
+        .message-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #2563eb;
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .action-container {
+            margin-top: 28px;
+            text-align: center;
+        }
+        .reply-btn {
+            display: inline-block;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+        }
+        .footer {
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .footer p {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Website Lead</h1>
+            <p>A new visitor submitted an inquiry on AI Digital Ranker</p>
+            <span class="badge">Immediate Action Required</span>
+        </div>
+        <div class="content">
+            <table class="lead-table">
+                <tr>
+                    <td class="label">Full Name</td>
+                    <td class="value"><strong>{{ lead.name }}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label">Email Address</td>
+                    <td class="value"><a href="mailto:{{ lead.email }}" style="color: #2563eb; text-decoration: none;">{{ lead.email }}</a></td>
+                </tr>
+                <tr>
+                    <td class="label">Phone Number</td>
+                    <td class="value">
+                        {% if lead.phone %}
+                            <a href="tel:{{ lead.phone }}" style="color: #2563eb; text-decoration: none;">{{ lead.phone }}</a>
+                        {% else %}
+                            <span style="color: #94a3b8;">Not provided</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Subject / Service</td>
+                    <td class="value">{{ lead.subject|default:"General Inquiry" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Submitted At</td>
+                    <td class="value">{{ lead.created_at|date:"M d, Y - h:i A" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Visitor IP</td>
+                    <td class="value" style="font-family: monospace; font-size: 13px;">{{ lead.ip_address|default:"N/A" }}</td>
+                </tr>
+            </table>
+
+            <div style="font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 8px;">Message Content:</div>
+            <div class="message-box">
+                {% if lead.message %}{{ lead.message }}{% else %}<em style="color: #94a3b8;">No additional message content provided.</em>{% endif %}
+            </div>
+
+            <div class="action-container">
+                <a href="mailto:{{ lead.email }}?subject=Re:%20{{ lead.subject|urlencode }}" class="reply-btn">
+                    Reply directly to {{ lead.name }}
+                </a>
+                <p style="font-size: 12px; color: #64748b; margin-top: 10px;">
+                    Tip: You can also click regular <strong>Reply</strong> in your email client to email this visitor directly.
+                </p>
+            </div>
+        </div>
+        <div class="footer">
+            <p><strong>AI Digital Ranker Lead Capture System</strong></p>
+            <p>This automated notification was generated from aidigitalranker.com</p>
+        </div>
+    </div>
+</body>
+</html>

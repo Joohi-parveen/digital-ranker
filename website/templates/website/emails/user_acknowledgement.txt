@@ -1,0 +1,16 @@
+Dear {{ lead.name }},
+
+Thank you for reaching out to AI Digital Ranker! We have successfully received your inquiry.
+
+One of our digital strategy specialists is reviewing your message and will get back to you within 24 business hours.
+
+Summary of Your Inquiry:
+- Subject / Service: {{ lead.subject|default:"General Inquiry" }}
+- Email: {{ lead.email }}
+{% if lead.phone %}- Phone: {{ lead.phone }}{% endif %}
+
+If you have any questions in the meantime, feel free to reply directly to this email or reach us at sales@aidigitalranker.com.
+
+Best regards,
+The AI Digital Ranker Team
+https://aidigitalranker.com

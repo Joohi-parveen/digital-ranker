@@ -1,0 +1,151 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Manage Services - AI digital Ranker CMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Actions -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--heading-color);">Services</h4>
+            <p class="text-muted mb-0" style="font-size: 13.5px;">Manage dynamic service landing pages with root-level SEO URLs</p>
+        </div>
+        <a href="{% url 'dashboard_service_create' %}" class="btn btn-primary fw-semibold px-4 py-2.5 d-flex align-items-center gap-2" style="border-radius: 12px;">
+            <i class="fa-solid fa-plus" style="font-size: 14px;"></i> Add New Service
+        </a>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="card-custom mb-4 p-4">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent text-muted" style="border-color: var(--border-color);"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" value="{{ query }}" class="form-control border-start-0 bg-transparent" placeholder="Search by title, slug, or content..." style="font-size: 14px; border-color: var(--border-color); color: var(--text-main) !important;">
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <select name="status" class="form-select bg-transparent text-muted" style="font-size: 14px; border-color: var(--border-color);">
+                    <option value="">All Statuses</option>
+                    <option value="PUBLISHED" {% if status_filter == 'PUBLISHED' %}selected{% endif %}>Published</option>
+                    <option value="DRAFT" {% if status_filter == 'DRAFT' %}selected{% endif %}>Draft</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-semibold px-4" style="border-radius: 10px; font-size: 14px;">Filter</button>
+                {% if query or status_filter %}
+                <a href="{% url 'dashboard_service_list' %}" class="btn btn-outline-secondary px-3" style="border-radius: 10px; font-size: 14px;">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Services Table -->
+    <div class="card-custom p-0 overflow-hidden">
+        <div class="table-responsive p-3">
+            <table class="table table-custom mb-0">
+                <thead>
+                    <tr>
+                        <th>Service Title & URL</th>
+                        <th>Status</th>
+                        <th>SEO Title</th>
+                        <th>Updated Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in page_obj %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border-color); color: var(--primary);">
+                                    <i class="fa-solid fa-briefcase" style="font-size: 18px;"></i>
+                                </div>
+                                <div>
+                                    <a href="{% url 'dashboard_service_update' service.slug %}" class="fw-semibold text-dark text-decoration-none d-block mb-1 hover-primary" style="font-size: 14.5px;">
+                                        {{ service.title }}
+                                    </a>
+                                    <span class="text-muted d-flex align-items-center gap-1 font-monospace" style="font-size: 12px;">
+                                        <i class="fa-solid fa-link text-primary" style="font-size: 10px;"></i> /{{ service.slug }}/
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if service.status == 'PUBLISHED' %}
+                            <span class="badge-published">Published</span>
+                            {% else %}
+                            <span class="badge-draft">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="text-secondary" style="font-size: 13.5px;">
+                                {{ service.meta_title|default:service.title|truncatechars:40 }}
+                            </span>
+                        </td>
+                        <td class="text-muted" style="font-size: 13.5px;">{{ service.updated_at|date:"M d, Y" }}</td>
+                        <td class="text-end">
+                            <!-- View Public Page -->
+                            <a href="/{{ service.slug }}/" target="_blank" class="btn-action me-1" title="View Public Service Page">
+                                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 13px;"></i>
+                            </a>
+                            <!-- Edit -->
+                            <a href="{% url 'dashboard_service_update' service.slug %}" class="btn-action me-1" title="Edit Service">
+                                <i class="fa-solid fa-pen-to-square" style="font-size: 13px;"></i>
+                            </a>
+                            <!-- Delete -->
+                            <a href="{% url 'dashboard_service_delete' service.slug %}" class="btn-action btn-action-delete" title="Delete Service" onclick="return confirm('Are you sure you want to delete service \'{{ service.title|escapejs }}\'?');">
+                                <i class="fa-solid fa-trash-can" style="font-size: 13px;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-briefcase mb-3 text-muted d-block" style="font-size: 44px; opacity: 0.4;"></i>
+                            No services found matching your criteria.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        {% if page_obj.has_other_pages %}
+        <div class="p-4 border-top d-flex align-items-center justify-content-between" style="border-color: var(--border-color) !important;">
+            <span class="text-muted" style="font-size: 13px;">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} services
+            </span>
+            <ul class="pagination pagination-sm mb-0 gap-1">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                        <i class="fa-solid fa-chevron-left" style="font-size: 11px;"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
