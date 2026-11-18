@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import BlogPost, BlogCategory, Service
+from .models import BlogPost, BlogCategory, Service, UrlRedirect
 from .models.seo import PageSEOSetting
+
+@admin.register(UrlRedirect)
+class UrlRedirectAdmin(admin.ModelAdmin):
+    list_display = ('old_path', 'new_path', 'http_status', 'updated_at')
+    search_fields = ('old_path', 'new_path')
+    list_filter = ('http_status',)
+    ordering = ('-updated_at',)
 
 @admin.register(PageSEOSetting)
 class PageSEOSettingAdmin(admin.ModelAdmin):

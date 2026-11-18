@@ -48,7 +48,12 @@
                                 <li class="menu-item"><a href="{% url 'home' %}" aria-label="Home"><i class="fas fa-home"></i></a></li>
                                 <li class="menu-item has-children"><a href="#">AI SEO Services</a>
                                     <ul class="sub-menu">
-                                        <li><a href="{% url 'service_detail' 'ai-seo-agency-india' %}"> AI SEO Agency India </a></li>
+                                        <li>
+                                            <a href="{% url 'service_detail' 'ai-seo-agency-india' %}"> AI SEO Agency India </a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{% url 'service_detail' 'ai-seo-agency-delhi' %}"> AI SEO Agency Delhi </a></li>
+                                            </ul>
+                                        </li>
                                         <li><a href="{% url 'service_detail' 'ai-seo-agency-delhi' %}"> AI SEO Agency Delhi </a></li>
                                         <li><a href="{% url 'service_detail' 'answer-engine-optimization-services' %}"> AEO Service </a></li>
                                         <li><a href="{% url 'service_detail' 'generative-engine-optimization-services' %}"> GEO Service </a></li>

@@ -99,6 +99,11 @@
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <input type="hidden" name="subject" value="Service Inquiry: {% if service %}{{ service.title }}{% else %}General Service{% endif %}">
+                            <!-- Anti-spam honeypot (hidden from humans, traps automated bots) -->
+                            <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                                <label for="id_service_website_url">Website</label>
+                                <input type="text" id="id_service_website_url" name="website_url" tabindex="-1" autocomplete="off" value="">
+                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group icon-form-grp">

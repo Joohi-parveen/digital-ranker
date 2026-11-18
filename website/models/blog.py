@@ -120,6 +120,19 @@ class BlogPost(models.Model):
         null=True,
         help_text="Optional custom heading for the FAQ section (e.g., 'Frequently Asked Questions')"
     )
+
+    # Video / YouTube Fields
+    youtube_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Optional YouTube video link (e.g. https://www.youtube.com/watch?v=...)"
+    )
+    youtube_button_text = models.CharField(
+        max_length=100,
+        blank=True,
+        default="Watch on YouTube",
+        help_text="Optional text for YouTube button (defaults to 'Watch on YouTube')"
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

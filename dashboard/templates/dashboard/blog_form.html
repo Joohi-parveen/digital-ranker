@@ -201,6 +201,34 @@
                         {% endif %}
                     </div>
 
+                    <!-- YouTube Link Section -->
+                    <h5 class="mb-4 pb-2 mt-5" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">
+                        <i class="fa-brands fa-youtube text-danger me-1"></i> YouTube Video Button (Optional)
+                    </h5>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-7 mb-3 mb-md-0">
+                            <label for="{{ form.youtube_url.id_for_label }}" class="form-label">
+                                YouTube Link URL
+                            </label>
+                            {{ form.youtube_url }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Leave blank if there is no YouTube video for this post.</div>
+                            {% if form.youtube_url.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ form.youtube_url.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-5">
+                            <label for="{{ form.youtube_button_text.id_for_label }}" class="form-label">
+                                Button Text
+                            </label>
+                            {{ form.youtube_button_text }}
+                            <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">Defaults to "Watch on YouTube".</div>
+                            {% if form.youtube_button_text.errors %}
+                            <div class="text-danger small mt-1.5"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ form.youtube_button_text.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
                     <!-- FAQ Section -->
                     <h5 class="mb-4 pb-2 mt-5" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border-color);">Frequently Asked Questions (Optional)</h5>
                     

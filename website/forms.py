@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 import re
 from django.utils.html import strip_tags
-from website.models import BlogPost, BlogCategory, ContactMessage, Service, CaseStudy
+from website.models import BlogPost, BlogCategory, ContactMessage, Service, CaseStudy, UrlRedirect
 
 RESERVED_ROOT_SLUGS = {
     'admin', 'dashboard', 'blog', 'blogs', 'about', 'contact', 'services', 
@@ -94,7 +94,7 @@ class BlogPostForm(forms.ModelForm):
         fields = [
             'title', 'slug', 'category', 'content', 'excerpt', 'featured_image', 
             'status', 'is_featured', 'meta_title', 'meta_description', 'meta_keywords',
-            'schema_markup', 'faq_heading'
+            'schema_markup', 'faq_heading', 'youtube_url', 'youtube_button_text'
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter blog title'}),
@@ -110,6 +110,8 @@ class BlogPostForm(forms.ModelForm):
             'meta_keywords': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'SEO Keywords, separated by commas'}),
             'schema_markup': forms.Textarea(attrs={'class': 'form-control font-monospace', 'rows': 4, 'placeholder': '{\n  "@context": "https://schema.org",\n  "@type": "Article"\n}'}),
             'faq_heading': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Frequently Asked Questions'}),
+            'youtube_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://www.youtube.com/watch?v=...'}),
+            'youtube_button_text': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Watch on YouTube'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -226,32 +228,73 @@ class ServiceForm(forms.ModelForm):
         return title
 
     def clean_slug(self):
-        slug = self.cleaned_data.get('slug', '').strip()
+        raw_slug = self.cleaned_data.get('slug', '').strip()
         title = self.cleaned_data.get('title', '').strip()
-        if not slug and title:
+
+        if not raw_slug and title:
             slug = slugify(title)
-        elif slug:
-            slug = slugify(slug)
+        elif raw_slug:
+            # Normalize path: strip leading/trailing slashes and collapse multiple slashes
+            segments = [slugify(part) for part in raw_slug.strip('/').split('/') if part.strip()]
+            slug = '/'.join(segments)
+        else:
+            slug = ''
 
         if not slug:
-            raise ValidationError("A valid URL slug is required.")
+            raise ValidationError("A valid URL path is required.")
 
-        # 1. Collision check against reserved root-level URLs
-        if slug.lower() in RESERVED_ROOT_SLUGS:
-            raise ValidationError(f"The slug '{slug}' is reserved for system pages. Please choose a different slug.")
+        # 1. Collision check: first segment against reserved root-level URLs
+        root_segment = slug.split('/')[0].lower()
+        if root_segment in RESERVED_ROOT_SLUGS:
+            raise ValidationError(f"The URL prefix '{root_segment}' is reserved for system pages. Please choose a different URL path.")
 
         # 2. Uniqueness check against other Service instances
         qs = Service.objects.filter(slug=slug)
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
-            raise ValidationError(f"A service with the slug '{slug}' already exists.")
+            raise ValidationError(f"A service with the URL '{slug}' already exists.")
 
         # 3. Collision check against BlogPosts
         if BlogPost.objects.filter(slug=slug).exists():
-            raise ValidationError(f"A blog post with the root URL slug '{slug}' already exists. Please choose a unique slug.")
+            raise ValidationError(f"A blog post with the URL '{slug}' already exists. Please choose a unique URL.")
 
         return slug
+
+    def save(self, commit=True):
+        """
+        Saves the Service. If the slug has changed on an existing service,
+        automatically creates or updates a 301 Permanent Redirect so Google search rankings
+        and existing indexed backlinks seamlessly transfer to the new URL without 404s.
+        """
+        old_slug = None
+        if self.instance.pk:
+            try:
+                old_instance = Service.objects.get(pk=self.instance.pk)
+                old_slug = old_instance.slug
+            except Service.DoesNotExist:
+                old_slug = None
+
+        instance = super().save(commit=commit)
+
+        new_slug = instance.slug
+        if old_slug and old_slug != new_slug:
+            # 1. Create 301 redirect from old_slug -> new_slug
+            UrlRedirect.objects.update_or_create(
+                old_path=old_slug,
+                defaults={
+                    'new_path': new_slug,
+                    'http_status': 301
+                }
+            )
+
+            # 2. Update any existing chains (if A previously pointed to old_slug, now point A -> new_slug)
+            UrlRedirect.objects.filter(new_path=old_slug).exclude(old_path=new_slug).update(new_path=new_slug)
+
+            # 3. Prevent redirect loops (if old_slug was previously a target redirecting back to new_slug)
+            UrlRedirect.objects.filter(old_path=new_slug).delete()
+
+        return instance
 
     def clean_hero_description(self):
         desc = self.cleaned_data.get('hero_description', '').strip()
@@ -282,10 +325,21 @@ class ContactForm(forms.ModelForm):
     phone = forms.CharField(required=False)
     subject = forms.CharField(required=False)
     message = forms.CharField(required=False, widget=forms.Textarea)
+    website_url = forms.CharField(required=False, widget=forms.HiddenInput)  # Honeypot field for bot trapping
 
     class Meta:
         model = ContactMessage
         fields = ['name', 'email', 'phone', 'subject', 'message']
+
+    def clean_website_url(self):
+        """
+        Honeypot field validation: Real users will never see or fill this.
+        If a bot fills it, treat it as spam.
+        """
+        val = self.cleaned_data.get('website_url', '').strip()
+        if val:
+            raise ValidationError("Spam submission detected.")
+        return val
 
     def clean_name(self):
         name = self.cleaned_data.get('name', '').strip()
@@ -294,6 +348,19 @@ class ContactForm(forms.ModelForm):
             raise ValidationError("Name is required.")
         if len(name) > 100:
             raise ValidationError("Name cannot exceed 100 characters.")
+
+        # Anti-Spam: Block links/URLs in name fields
+        url_pattern = re.compile(
+            r'(https?://|www\.|ftp://|\.com\b|\.ru\b|\.xyz\b|\.top\b|\.online\b|\.cn\b|\.tk\b|\.link\b|tinyurl\.com|bit\.ly|t\.co)',
+            re.IGNORECASE
+        )
+        if url_pattern.search(name):
+            raise ValidationError("Invalid name format. URLs and links are not allowed in the name field.")
+
+        # Anti-Spam: Block Cyrillic/Russian script spam in names if site is English
+        if re.search(r'[\u0400-\u04FF]', name):
+            raise ValidationError("Invalid name format. Non-Latin scripts are not supported.")
+
         return name
 
     def clean_email(self):
@@ -317,6 +384,9 @@ class ContactForm(forms.ModelForm):
         phone = strip_tags(phone)
         if len(phone) > 20:
             raise ValidationError("Phone cannot exceed 20 characters.")
+        # Reject phone numbers with letters or URLs
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Phone number should only contain numbers, spaces, or valid symbols (+, -, ()).")
         return phone
 
     def clean_message(self):

@@ -24,8 +24,8 @@ urlpatterns = [
     # Services CRUD
     path('services/', views.dashboard_service_list, name='dashboard_service_list'),
     path('services/add/', views.dashboard_service_create, name='dashboard_service_create'),
-    path('services/<slug:slug>/edit/', views.dashboard_service_update, name='dashboard_service_update'),
-    path('services/<slug:slug>/delete/', views.dashboard_service_delete, name='dashboard_service_delete'),
+    path('services/<path:slug>/edit/', views.dashboard_service_update, name='dashboard_service_update'),
+    path('services/<path:slug>/delete/', views.dashboard_service_delete, name='dashboard_service_delete'),
     
     # Case Studies CRUD
     path('case-studies/', views.dashboard_case_study_list, name='dashboard_case_study_list'),

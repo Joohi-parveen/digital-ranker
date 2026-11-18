@@ -21,11 +21,11 @@ class Service(models.Model):
 
     # Core Fields
     title = models.CharField(max_length=200, help_text="Service title")
-    slug = models.SlugField(
-        max_length=200, 
+    slug = models.CharField(
+        max_length=255, 
         unique=True, 
         blank=True, 
-        help_text="Root-level URL slug (e.g. 'answer-engine-optimization' becomes '/answer-engine-optimization/')"
+        help_text="Custom URL path (e.g. 'answer-engine-optimization' or nested 'india/delhi-ncr/ai-seo-agency-delhi')"
     )
     content = models.TextField(help_text="Service body HTML content")
     status = models.CharField(

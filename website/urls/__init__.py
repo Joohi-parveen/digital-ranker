@@ -14,8 +14,8 @@ urlpatterns = [
     path("case-study/", include("website.urls.case_studies")),
     # Top-level SEO-friendly URLs for both Blog Posts and Service Pages
     # The blog_detail name has been moved to website.urls.blog. dynamic_page_detail now handles 301 redirects for legacy blog URLs.
-    path("<slug:slug>/", views.dynamic_page_detail, name="dynamic_page_detail"),
-    path("<slug:slug>/", views.dynamic_page_detail, name="service_detail"),
+    path("<path:slug>/", views.dynamic_page_detail, name="dynamic_page_detail"),
+    path("<path:slug>/", views.dynamic_page_detail, name="service_detail"),
 ]
 
 
